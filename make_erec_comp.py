@@ -293,6 +293,6 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             
 if __name__ == "__main__":
 
-    inputDir="/project/projectdirs/dune/users/cwilk/MC_IOP_review/*/"
+    inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     make_T2K_erec_plots(inputDir)
     make_DUNE_erec_plots(inputDir)
