@@ -219,7 +219,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
     can .SaveAs("plots/"+outPlotName)
 
     
-def make_T2K_erec_plots():
+def make_T2K_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -238,13 +238,13 @@ def make_T2K_erec_plots():
     for det in ["T2KND", "T2KSK_osc"]:
         for flux in ["FHC_numu", "RHC_numubar"]:
             ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-            inFileList = ["inputs/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_GENIEv3_G18_10b_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_GENIEv3_G18_10c_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_NEUT562_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_0000_NUISFLAT.root"\
+            inFileList = [inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_NEUT562_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
             make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.png", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
@@ -254,7 +254,7 @@ def make_T2K_erec_plots():
             make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
                                 "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
             
-def make_DUNE_erec_plots():
+def make_DUNE_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -274,13 +274,13 @@ def make_DUNE_erec_plots():
     for det in ["DUNEND", "DUNEFD_osc"]:
         for flux in ["FHC_numu"]: #, "RHC_numubar"]:
             ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-            inFileList = ["inputs/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_NEUT562_1M_0000_NUISFLAT.root",\
-                          "inputs/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_0000_NUISFLAT.root"\
+            inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
             make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
@@ -293,5 +293,6 @@ def make_DUNE_erec_plots():
             
 if __name__ == "__main__":
 
-    #make_T2K_erec_plots()
-    make_DUNE_erec_plots()
+    inputDir="/project/projectdirs/dune/users/cwilk/MC_IOP_review/*/"
+    make_T2K_erec_plots(inputDir)
+    make_DUNE_erec_plots(inputDir)
