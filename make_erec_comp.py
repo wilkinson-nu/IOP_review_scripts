@@ -272,7 +272,7 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
 
     ## Loop over configs
     for det in ["DUNEND", "DUNEFD_osc"]:
-        for flux in ["FHC_numu"]: #, "RHC_numubar"]:
+        for flux in ["FHC_numu", "RHC_numubar"]:
             ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
             inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
