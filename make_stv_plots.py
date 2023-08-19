@@ -236,7 +236,7 @@ def make_T2K_stv_plots(inputDir="inputs/"):
 
     ## Loop over configs
     det = "T2KND"
-    targ = "C8H8"
+    targ = "H2O"
     for flux in ["FHC_numu", "RHC_numubar"]:
         ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
         inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
@@ -252,10 +252,10 @@ def make_T2K_stv_plots(inputDir="inputs/"):
                             "#delta p_{T} (GeV); d#sigma/d#delta p_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
         
         make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dalphat", "80,0,3.2", qe_cut, \
-                            "#delta#alpha_{T} (GeV); d#sigma/d#alpha_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
+                            "#delta#alpha_{T}; d#sigma/d#alpha_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
 
         make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dphit", "80,0,3.2", qe_cut, \
-                            "#delta#phi_{T} (GeV); d#sigma/d#delta#phi_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
+                            "#delta#phi_{T}; d#sigma/d#delta#phi_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
                 
 def make_DUNE_erec_plots(inputDir="inputs/"):
 
