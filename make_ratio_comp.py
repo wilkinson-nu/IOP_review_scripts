@@ -246,7 +246,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     can .SaveAs("plots/"+outPlotName)
 
     
-def make_flav_ratio_plots(inputDir="inputs/"):
+def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -263,9 +263,6 @@ def make_flav_ratio_plots(inputDir="inputs/"):
     cc_cut = "cc==1"
 
     det  = "flat_0-10GeV"
-    flav1 = "nue"
-    flav2 = "numu"
-    targ = "Ar40"
 
     inFileNumList = [inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
@@ -286,11 +283,16 @@ def make_flav_ratio_plots(inputDir="inputs/"):
                      ]    
     
     make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_gencomp.png", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "100,0,10", cc_cut, \
+                              nameList, colzList, "Enu_true", "25,0,5", cc_cut, \
                               "E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)", False)
     
     
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    make_flav_ratio_plots(inputDir)
+    for targ in ["Ar40", "C8H8", "H2O"]:
+        make_flav_ratio_plots(inputDir, "nue", "numu", targ)
+        make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ)
+        make_flav_ratio_plots(inputDir, "nuebar", "nue", targ)
+        make_flav_ratio_plots(inputDir, "numubar", "numu", targ)
+
