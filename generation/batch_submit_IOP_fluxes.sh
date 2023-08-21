@@ -119,8 +119,6 @@ do
     for i in $(seq ${FIRST_CONFIG} ${LAST_CONFIG}); do
 	
 	OUTDIR="${CFS}/dune/users/cwilk/MC_IOP_review/${GENERATOR}"
-        echo "$i ${flux_file_arr[$i]} ${flux_hist_arr[$i]}"
-
 	
 	if [ ! -d "${OUTDIR}" ]; then
 	    mkdir -p ${OUTDIR}
