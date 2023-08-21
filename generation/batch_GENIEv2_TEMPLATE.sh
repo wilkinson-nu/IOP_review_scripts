@@ -20,7 +20,7 @@ OUTFILE=__OUTFILE__
 
 ## These are the same for all jobs
 NEVENTS=1000000
-E_MIN=0.1
+E_MIN=__E_MIN__
 E_MAX=__E_MAX__
 CONFIG=ValenciaQEBergerSehgalCOHRES
 GXMLPATH=/opt/generators/GENIE/R-2_12_10/genie_xsec/${CONFIG}
@@ -33,7 +33,7 @@ mkdir ${tempDir}
 cd ${tempDir}
 
 ## Get the flux file
-cp $CFS/dune/users/cwilk/MC_inputs/${FLUX_FILE} .
+cp ${PWD}/MC_inputs/${FLUX_FILE} .
 
 echo "Starting gevgen..."
 shifter -V ${PWD}:/output --entrypoint /bin/sh -c "export GXMLPATH=${GXMLPATH}; gevgen -n ${NEVENTS} -t ${TARG} -p ${nuType} --cross-sections ${GXMLPATH}/gxspl-FNALsmall.xml.gz --event-generator-list Default+CCMEC -f ${FLUX_FILE},${FLUX_HIST} -e ${E_MIN},${E_MAX} -o ${OUTFILE} --seed ${THIS_SEED}"

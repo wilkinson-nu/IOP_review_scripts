@@ -20,7 +20,7 @@ ROOT_NAME=__ROOT_NAME__
 OUTFILE=__OUTFILE__
 
 ## Place for storing common inputs
-INDIR=$CFS/dune/users/cwilk/MC_inputs
+INDIR=${PWD}/MC_inputs
 INCARD=generic_NEUT.card
 
 ## Where to temporarily save files

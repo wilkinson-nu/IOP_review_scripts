@@ -21,7 +21,7 @@ OUTFILE=__OUTFILE__
 ## Output file name
 TUNE=G18_10X_00_000
 NEVENTS=1000000
-E_MIN=0.1
+E_MIN=__E_MIN__
 E_MAX=__E_MAX__
 
 ## Where to temporarily save files
@@ -32,13 +32,13 @@ mkdir ${TEMPDIR}
 cd ${TEMPDIR}
 
 ## Get the splines that are now needed...
-cp $CFS/dune/users/cwilk/MC_inputs/${TUNE}_v320_splines.xml .
+cp ${PWD}/MC_inputs/${TUNE}_v320_splines.xml .
 
 ## Get the noFSI override
-cp -r $CFS/dune/users/cwilk/MC_inputs/${TUNE}_CONFIG .
+cp -r ${PWD}/MC_inputs/${TUNE}_CONFIG .
 
 ## Get the flux file
-cp $CFS/dune/users/cwilk/MC_inputs/${FLUX_FILE} .
+cp ${PWD}/MC_inputs/${FLUX_FILE} .
 
 ## Need to set the GXMLPATH I think
 echo "Starting gevgen..."

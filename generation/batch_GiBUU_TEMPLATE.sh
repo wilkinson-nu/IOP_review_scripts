@@ -14,7 +14,7 @@ outDir=__THIS_OUTDIR__
 nuType=__THIS_FLAV__
 
 ## Place for storing common inputs
-inDir=$CFS/dune/users/cwilk/MC_inputs
+inDir=${PWD}/MC_inputs
 inCard=dune_Ar40_${nuType}_GiBUU.job
 
 ## Output file name
