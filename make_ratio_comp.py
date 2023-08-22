@@ -43,10 +43,10 @@ can .cd()
 
 def get_flav_label(flav):
     label = "#nu"
+    if "bar" in flav: label = "#bar{"+label+"}"
     if "mu" in flav: label += "_{#mu}"
     if "tau" in flav: label += "_{#tau}"
     if "e" in flav: label += "_{e}"
-    if "bar" in flav: label = "#bar{"+label+"}"
     return label
 
 ## In this case, ignore hydrogen...
@@ -107,7 +107,7 @@ def get_chain(inputFileNames, max_files=999):
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                              isShape=False, maxVal=None):
+                              isShape=False):
     isLog = False
     histNumList = []
     histDenList = []
@@ -183,16 +183,13 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ratList  .append(rat_hist)
         
     ## Get the maximum value
-    if not maxVal:
-        maxVal   = 0
-        for hist in histList:
-            if hist.GetMaximum() > maxVal:
-                maxVal = hist.GetMaximum()        
-        maxVal = maxVal*1.1
+    maxVal = 1.5
+    minVal = 0.5
         
     ## Actually draw the histograms
     histList[0].Draw("HIST")
     histList[0].SetMaximum(maxVal)
+    histList[0].SetMinimum(minVal)
 
     ## Unify title/label sizes
     histList[0] .GetYaxis().SetTitleSize(titleSize)
@@ -210,6 +207,11 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         histList[x].SetLineColor(colzList[x])
         histList[x].Draw("HIST SAME")
 
+    midline = TLine(ratList[1].GetXaxis().GetBinLowEdge(1), 1, ratList[1].GetXaxis().GetBinUpEdge(ratList[1].GetNbinsX()), 1)
+    midline .SetLineWidth(3)
+    midline .SetLineColor(ROOT.kBlack)
+    midline .SetLineStyle(11)
+    midline .Draw("LSAME")
     
     ## Now make a legend
     dim = [0.2, 0.85, 0.98, 1.00]
@@ -257,10 +259,6 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ratList[x].SetLineColor(colzList[x])
         ratList[x].Draw("][ HIST SAME")
 
-    midline = TLine(ratList[1].GetXaxis().GetBinLowEdge(1), 1, ratList[1].GetXaxis().GetBinUpEdge(ratList[1].GetNbinsX()), 1)
-    midline .SetLineWidth(3)
-    midline .SetLineColor(ROOT.kBlack)
-    midline .SetLineStyle(11)
     midline .Draw("LSAME")
     
     ## Save
