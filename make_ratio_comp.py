@@ -107,7 +107,7 @@ def get_chain(inputFileNames, max_files=999):
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                              isShape=False):
+                              isShape=False, minMax=None):
     isLog = False
     histNumList = []
     histDenList = []
@@ -185,7 +185,11 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     ## Get the maximum value
     maxVal = 1.5
     minVal = 0.5
-        
+
+    if minMax:
+        minVal = minMax[0]
+        maxVal = minMax[1]
+    
     ## Actually draw the histograms
     histList[0].Draw("HIST")
     histList[0].SetMaximum(maxVal)
@@ -271,7 +275,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     can .SaveAs("plots/"+outPlotName)
 
     
-def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc"):
+def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", minMax=None):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -311,9 +315,10 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
     
     make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_gencomp.png", inFileNumList, inFileDenList, \
                               nameList, colzList, "Enu_true", "25,0,5", cut, \
-                              "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", False)
+                              "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
+                              False, minMax)
 
-def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc"):
+def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc", minMax=None):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -353,15 +358,23 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     
     make_generator_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_gencomp.png", inFileNumList, inFileDenList, \
                               nameList, colzList, "Enu_true", "25,0,5", cut, \
-                              "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", False)
+                              "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
+                              False, minMax)
     
     
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     for targ in ["Ar40", "C8H8", "H2O"]:
-        make_flav_ratio_plots(inputDir, "nue", "numu", targ, targ)
-        make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, targ)
-        make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, targ)
-        make_flav_ratio_plots(inputDir, "numubar", "numu", targ)
+        for sample in ["ccinc", "cc0pi"]:
+            make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.5])
+            make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.5])
+            make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.6])
+            make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.6])
+
+    for flav in ["numu", "numubar", "nue", "nuebar"]:
+        for sample in ["ccinc", "cc0pi"]:
+            make_targ_ratio_plots(inputDir, "Ar40", "C12", flav, sample)
+            make_targ_ratio_plots(inputDir, "O16", "C12", flav, sample)
+
 
