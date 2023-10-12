@@ -247,11 +247,11 @@ def make_T2K_erec_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.png", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
+            make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.png", inFileList, nameList, colzList, "Enu_QE", "40,0,2", qe_cut, \
                                 "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)", False)
             
         
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
+            make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "40,-1,1", qe_cut, \
                                 "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
             
 def make_DUNE_erec_plots(inputDir="inputs/"):
@@ -283,7 +283,7 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+            make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.png", inFileList, nameList, colzList, enuhad, "40,0,8", ehad_cut, \
                                 "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
             
         

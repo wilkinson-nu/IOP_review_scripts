@@ -221,12 +221,12 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
     
 def make_T2K_stv_plots(inputDir="inputs/"):
 
-    nameList = ["GENIE 10a",\
+    nameList = ["NEUT", \
+                "GENIE 10a",\
                 "GENIE 10b",\
                 "GENIE 10c",\
                 "CRPA",\
                 "SuSAv2",\
-                "NEUT",\
                 "NuWro"\
                 ]
     colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
@@ -237,26 +237,36 @@ def make_T2K_stv_plots(inputDir="inputs/"):
     ## Loop over configs
     det = "T2KND"
     targ = "H2O"
-    for flux in ["FHC_numu", "RHC_numubar"]:
+    for flux in ["FHC_numu"]: #, "RHC_numubar"]:
         ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-        inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+        inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                       ]
         
-        make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dpt/1000.", "80,0,2", qe_cut, \
+        make_generator_comp(det+"_"+flux+"_dpt_shape_gencomp.png", inFileList, nameList, colzList, "dpt/1000.", "30,0,1.5", qe_cut, \
+                            "#delta p_{T} (GeV); d#sigma/d#delta p_{T} (#times 10^{-38} cm^{2}/nucleon)", True)
+        
+        make_generator_comp(det+"_"+flux+"_dalphat_shape_gencomp.png", inFileList, nameList, colzList, "dalphat", "32,0,3.2", qe_cut, \
+                            "#delta#alpha_{T}; d#sigma/d#alpha_{T} (#times 10^{-38} cm^{2}/nucleon)", True)
+        
+        make_generator_comp(det+"_"+flux+"_dphit_shape_gencomp.png", inFileList, nameList, colzList, "dphit", "32,0,3.2", qe_cut, \
+                            "#delta#phi_{T}; d#sigma/d#delta#phi_{T} (#times 10^{-38} cm^{2}/nucleon)", True)
+
+        make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dpt/1000.", "30,0,1.5", qe_cut, \
                             "#delta p_{T} (GeV); d#sigma/d#delta p_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
         
-        make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dalphat", "80,0,3.2", qe_cut, \
+        make_generator_comp(det+"_"+flux+"_dalphat_gencomp.png", inFileList, nameList, colzList, "dalphat", "32,0,3.2", qe_cut, \
                             "#delta#alpha_{T}; d#sigma/d#alpha_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
-
-        make_generator_comp(det+"_"+flux+"_dpt_gencomp.png", inFileList, nameList, colzList, "dphit", "80,0,3.2", qe_cut, \
+        
+        make_generator_comp(det+"_"+flux+"_dphit_gencomp.png", inFileList, nameList, colzList, "dphit", "32,0,3.2", qe_cut, \
                             "#delta#phi_{T}; d#sigma/d#delta#phi_{T} (#times 10^{-38} cm^{2}/nucleon)", False)
-                
+
+        
 def make_DUNE_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\

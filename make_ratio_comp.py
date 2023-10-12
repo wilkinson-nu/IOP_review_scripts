@@ -1,4 +1,5 @@
 import ROOT
+import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory
 from glob import glob
 
@@ -65,7 +66,6 @@ def get_targ_norm(inString):
     
 def get_chain(inputFileNames, max_files=999):
 
-    print("Found", inputFileNames)
     inFile   = ROOT.TFile(glob(inputFileNames)[0], "READ")
     inFlux   = None
     inEvt    = None
@@ -100,7 +100,7 @@ def get_chain(inputFileNames, max_files=999):
             else: inEvt.Add(tempEvt)
         inFile.Close()    
 
-    print("Found", inTree.GetEntries(), "events in chain")
+    print("Found", inputFileNames, ":", inTree.GetEntries(), "events in", nFiles, "files")
 
     return inTree, inFlux, inEvt, nFiles
 
@@ -108,6 +108,12 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
                               isShape=False, minMax=None):
+
+    ## Skip files that already exist
+    if os.path.isfile("plots/"+outPlotName):
+        print("Skipping plots/"+outPlotName, "which already exists!")
+        return
+
     isLog = False
     histNumList = []
     histDenList = []
@@ -205,7 +211,6 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     histList[0] .GetXaxis().SetTitleSize(0.0)
     histList[0] .GetXaxis().SetLabelSize(0.0)
     
-    if not isLog: histList[0].SetMinimum(0)
     for x in reversed(range(len(histList))):
         histList[x].SetLineWidth(3)
         histList[x].SetLineColor(colzList[x])
@@ -287,13 +292,13 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
                 ]
     colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
     
-    cut = "cc==1 && tgta != 1"
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
     sample_label = "CCINC"
     if sample == "cc0pi":
-        cut = "cc==1 && tgta != 1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
         
-    det  = "flat_0-10GeV"
+    det  = "falling_5GeV"
 
     inFileNumList = [inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
@@ -313,8 +318,8 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    
     
-    make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_gencomp.png", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "25,0,5", cut, \
+    make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp.png", inFileNumList, inFileDenList, \
+                              nameList, colzList, "Enu_true", "20,0,5", cut, \
                               "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
                               False, minMax)
 
@@ -330,13 +335,13 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
                 ]
     colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
     
-    cut = "cc==1 && tgta != 1"
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
     sample_label = "CCINC"
     if sample == "cc0pi":
-        cut = "cc==1 && tgta != 1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
 
-    det  = "flat_0-10GeV"
+    det  = "falling_5GeV"
 
     inFileNumList = [inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
@@ -356,8 +361,8 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
                      inputDir+"/"+det+"_"+flav+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    
     
-    make_generator_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_gencomp.png", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "25,0,5", cut, \
+    make_generator_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.png", inFileNumList, inFileDenList, \
+                              nameList, colzList, "Enu_true", "20,0,5", cut, \
                               "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
                               False, minMax)
     
@@ -369,12 +374,12 @@ if __name__ == "__main__":
         for sample in ["ccinc", "cc0pi"]:
             make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.5])
             make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.5])
-            make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.6])
-            make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.6])
+            make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.8])
+            make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.8])
 
     for flav in ["numu", "numubar", "nue", "nuebar"]:
         for sample in ["ccinc", "cc0pi"]:
-            make_targ_ratio_plots(inputDir, "Ar40", "C12", flav, sample)
-            make_targ_ratio_plots(inputDir, "O16", "C12", flav, sample)
+            make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flav, sample)
+            make_targ_ratio_plots(inputDir, "H2O", "C8H8", flav, sample)
 
 
