@@ -298,8 +298,8 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
 
     ## Skip ratListABCD[0] as everything is a ratio w.r.t that
     ratListABCD[1] .Draw("][ HIST")
-    ratListABCD[1] .SetMaximum(1.5)
-    ratListABCD[1] .SetMinimum(0.5)
+    ratListABCD[1] .SetMaximum(1.3)
+    ratListABCD[1] .SetMinimum(0.7)
 
     ratListABCD[1] .GetYaxis().SetTitle("Ratio w.r.t. "+nameList[0])
     ratListABCD[1] .GetYaxis().CenterTitle(1)
@@ -389,7 +389,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     make_double_ratio_comp(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.png", \
                            inFileListA, inFileListB, inFileListC, inFileListD, \
                            nameList, colzList, "Enu_true", "20,0,5", cut, \
-                           "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+get_flav_label(flavD)+") "+ get_targ_label(targ)+"}/ "+sample_label+" ratio", \
+                           "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio", \
                            False, minMax)
 
 def make_targ_double_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flavA="nue", flavB="numu", sample="ccinc", minMax=None):
@@ -445,9 +445,10 @@ def make_targ_double_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", 
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]  
     
-    make_double_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.png", inFileNumList, inFileDenList, \
+    make_double_ratio_comp(det+"_double_targ_ratio_"+targ1+"_over_"+targ2+"_"+flavA+"_over_"+flavB+"_enu_"+sample+"_gencomp.png",
+                           inFileListA, inFileListB, inFileListC, inFileListD, \
                            nameList, colzList, "Enu_true", "20,0,5", cut, \
-                           "E_{#nu}^{true} (GeV);("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"+get_targ_label(targ1)+"}/("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"get_targ_label(targ2)+"} "+sample_label+" ratio", \
+                           "E_{#nu}^{true} (GeV);("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"+get_targ_label(targ1)+"}/("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"+get_targ_label(targ2)+"} "+sample_label+" ratio", \
                            False, minMax)
     
     
@@ -456,17 +457,17 @@ if __name__ == "__main__":
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     for targ in ["Ar40", "C8H8", "H2O"]:
         for sample in ["ccinc", "cc0pi"]:
-            make_flav_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample) #, [0.9, 1.5])
+            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
 
-    flavA = "nue"
-    flavB = "numu"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
-
-    flavA = "nuebar"
-    flavB = "numubar"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
+    ## flavA = "nue"
+    ## flavB = "numu"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
+    ## 
+    ## flavA = "nuebar"
+    ## flavB = "numubar"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
 
