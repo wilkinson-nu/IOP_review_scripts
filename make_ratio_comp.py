@@ -42,6 +42,10 @@ kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
 can = TCanvas("can", "can", 600, 1000)
 can .cd()
 
+def get_scalef(intree):
+    intree.GetEntry(0)
+    return intree.fScaleFactor
+
 def get_flav_label(flav):
     label = "#nu"
     if "bar" in flav: label = "#bar{"+label+"}"
@@ -145,7 +149,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(targNorm/float(nFiles))
+        thisHist.Scale(get_scalef(inTree)*targNorm/float(nFiles))
 
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())
@@ -166,7 +170,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(targNorm/float(nFiles))
+        thisHist.Scale(get_scalef(inTree)*targNorm/float(nFiles))
 
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())
