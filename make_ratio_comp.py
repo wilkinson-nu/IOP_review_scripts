@@ -144,7 +144,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ## Correct for hydrogen in some of the samples
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -165,7 +165,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
