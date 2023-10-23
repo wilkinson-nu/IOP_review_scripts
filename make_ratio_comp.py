@@ -44,7 +44,7 @@ can .cd()
 
 def get_scalef(intree):
     intree.GetEntry(0)
-    return intree.fScaleFactor
+    return intree.fScaleFactor*1E38
 
 def get_flav_label(flav):
     label = "#nu"
