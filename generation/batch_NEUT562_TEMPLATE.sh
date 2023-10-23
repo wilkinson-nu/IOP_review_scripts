@@ -1,8 +1,9 @@
 #!/bin/bash
 #SBATCH --image=docker:wilkinsonnu/nuisance_project:neut_5.6.2
+#SBATCH --account=m4045
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
-#SBATCH --time=720
+#SBATCH --time=1440
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --mem=4GB
@@ -20,7 +21,7 @@ ROOT_NAME=__ROOT_NAME__
 OUTFILE=__OUTFILE__
 
 ## Place for storing common inputs
-INDIR=${PWD}/MC_inputs
+INPUTS_DIR=${PWD}/MC_inputs
 INCARD=generic_NEUT.card
 
 ## Where to temporarily save files
@@ -35,8 +36,8 @@ echo "${THIS_SEED} $((THIS_SEED+1)) $((THIS_SEED+2)) $((THIS_SEED+3)) $((THIS_SE
 export RANFILE=ranfile.txt
 
 ## Sort out the inputs
-cp ${INDIR}/${FLUX_FILE} .
-cp ${INDIR}/${INCARD} .
+cp ${INPUTS_DIR}/${FLUX_FILE} .
+cp ${INPUTS_DIR}/${INCARD} .
 sed -i "s/_NU_PDG_/${NU_PDG}/g" ${INCARD}
 sed -i "s/_FLUX_FILE_/${FLUX_FILE}/g" ${INCARD}
 sed -i "s/_FLUX_HIST_/${FLUX_HIST}/g" ${INCARD}

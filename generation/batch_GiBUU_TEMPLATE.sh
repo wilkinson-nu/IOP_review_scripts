@@ -14,7 +14,7 @@ outDir=__THIS_OUTDIR__
 nuType=__THIS_FLAV__
 
 ## Place for storing common inputs
-inDir=${PWD}/MC_inputs
+INPUTS_DIR=${PWD}/MC_inputs
 inCard=dune_Ar40_${nuType}_GiBUU.job
 
 ## Output file name
@@ -31,8 +31,8 @@ mkdir ${tempDir}
 cd ${tempDir}
 
 ## Sort out the inputs
-cp ${inDir}/${fluxFile} .
-cp ${inDir}/${inCard} .
+cp ${INPUTS_DIR}/${fluxFile} .
+cp ${INPUTS_DIR}/${inCard} .
 sed -i "s/_THIS_SEED_/${THIS_SEED}/g" ${inCard}
 sed -i "s/_THIS_FLUX_FILE_/${fluxFile}/g" ${inCard}
 
