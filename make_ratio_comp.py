@@ -42,10 +42,6 @@ kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
 can = TCanvas("can", "can", 600, 1000)
 can .cd()
 
-def get_scalef(intree):
-    intree.GetEntry(0)
-    return intree.fScaleFactor*1E38
-
 def get_flav_label(flav):
     label = "#nu"
     if "bar" in flav: label = "#bar{"+label+"}"
@@ -109,7 +105,7 @@ def get_chain(inputFileNames, max_files=999):
     return inTree, inFlux, inEvt, nFiles
 
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, \
-                              plotVar="q0", binning="100,0,5", cut="cc==1", \
+                              plotVar="q0", binning=[100,0,5], cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
                               isShape=False, minMax=None):
 
@@ -134,6 +130,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
     titleSize = 0.05
     labelSize = 0.04
+    histNum   = 0
     
     ## Loop over the input files and make the histograms
     for inFileName in inFileNumList:
@@ -143,20 +140,20 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         ## Correct for hydrogen in some of the samples
         targNorm = get_targ_norm(inFileName)
-        
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")")
-        thisHist = gDirectory.Get("this_hist")
+
+        thisHist = TH1D("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels, binning[0], binning[1], binning[2])
+        inTree.Draw(plotVar+">>hist_"+str(histNum), "("+cut+")*fScaleFactor")
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(get_scalef(inTree)*targNorm/float(nFiles))
+        thisHist.Scale(targNorm/float(nFiles))
 
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())
 
         ## Retain for use
-        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
         histNumList .append(thisHist)
+        histNum += 1
         
     for inFileName in inFileDenList:
 
@@ -164,21 +161,21 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
 
         targNorm = get_targ_norm(inFileName)
-        
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")")
-        thisHist = gDirectory.Get("this_hist")
+
+        thisHist = TH1D("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels, binning[0], binning[1], binning[2])
+        inTree.Draw(plotVar+">>hist_"+str(histNum), "("+cut+")*fScaleFactor")
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(get_scalef(inTree)*targNorm/float(nFiles))
+        thisHist.Scale(targNorm/float(nFiles))
 
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())
 
         ## Retain for use
-        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
         histDenList .append(thisHist)
-
+        histNum += 1
+        
     ## Make the first ratio
     for x in range(len(histNumList)):
         rat_hist = histNumList[x].Clone()
@@ -323,7 +320,7 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
                      ]    
     
     make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp.png", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "20,0,5", cut, \
+                              nameList, colzList, "Enu_true", [20,0,5], cut, \
                               "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
                               False, minMax)
 
@@ -366,7 +363,7 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
                      ]    
     
     make_generator_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.png", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "20,0,5", cut, \
+                              nameList, colzList, "Enu_true", [20,0,5], cut, \
                               "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
                               False, minMax)
     
