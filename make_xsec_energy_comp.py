@@ -110,6 +110,11 @@ def get_chain(inputFileNames, max_files=999):
 def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
                         rebin=1, cut="cc==1", \
                         isOverEnu=False, minMax=None):
+
+    if os.path.isfile("plots/"+outPlotName):
+        print("Skipping plots/"+outPlotName, "which already exists!")
+        return
+
     isLog = False
     histList = []
     ratList  = []
