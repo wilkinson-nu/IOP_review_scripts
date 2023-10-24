@@ -157,7 +157,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
             for x in range(thisHist.GetNbinsX()):
                 this_enu = thisHist.GetXaxis().GetBinCenter(x+1)
                 this_val = thisHist.GetBinContent(x+1)
-                thisHist .SetBinContent(x+1, this_val/this_enu
+                thisHist .SetBinContent(x+1, this_val/this_enu)
         
         ## Retain for use
         histList .append(thisHist)
@@ -266,7 +266,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
     can .SaveAs("plots/"+outPlotName)
 
     
-def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", minMax=None):
+def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", isOverEnu=False, minMax=None):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -296,9 +296,11 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                   ]
-            
-    make_generator_comp(det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.png", inFileList, nameList, colzList, 1, cut, \
-                        False, minMax)
+
+    outFileName = det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.png"
+    if isOverEnu: outFileName = det+"_"+flav+"_"+targ+"_Enu_"+sample+"_overEnu_gencomp.png"
+    make_generator_comp(outFileName, inFileList, nameList, colzList, 2, cut, \
+                        isOverEnu, minMax)
                 
 if __name__ == "__main__":
 
@@ -306,5 +308,8 @@ if __name__ == "__main__":
 
     for targ in ["Ar40", "C8H8", "H2O"]:
         for flav in ["numu", "numubar", "nue", "nuebar"]:
-            for sample in ["ccinc", "cc0pi"]:
-                make_xsec_energy_comp_plots(inputDir, flav, targ, sample)
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
+            
+
