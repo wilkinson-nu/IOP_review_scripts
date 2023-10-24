@@ -105,9 +105,8 @@ def get_chain(inputFileNames, max_files=999):
     return inTree, inFlux, inEvt, nFiles
 
 def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
-                        plotVar="q0", rebin=1, cut="cc==1", \
-                        labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                        isShape=False, minMax=None):
+                        rebin=1, cut="cc==1", \
+                        isOverEnu=False, minMax=None):
     isLog = False
     histList = []
     ratList  = []
@@ -123,6 +122,11 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
     titleSize = 0.05
     labelSize = 0.04
     histNum = 0
+
+    ## This now only works for XSEC as a function of Enu
+    plotVar = "Enu_true"
+    labels="E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)"
+    if isOverEnu: labels ="E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true}/E_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon/GeV)"
     
     ## Loop over the input files and make the histograms
     for inFileName in inFileList:
@@ -135,9 +139,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
         
         thisHist = inFlux .Clone()
         thisHist .Clear()
-        thisHist .SetNameTitle("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels)
-        
-        # thisHist = TH1D("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels, binning[0], binning[1], binning[2])
+        thisHist .SetNameTitle("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels)        
         inTree.Draw(plotVar+">>hist_"+str(histNum), "("+cut+")*fScaleFactor")
         thisHist .SetDirectory(0)
 
@@ -151,7 +153,11 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
         thisHist.Rebin(rebin)
         
         ## Allow for shape option
-        if isShape: thisHist .Scale(1/thisHist.Integral())
+        if isOverEnu:
+            for x in range(thisHist.GetNbinsX()):
+                this_enu = thisHist.GetXaxis().GetBinCenter(x+1)
+                this_val = thisHist.GetBinContent(x+1)
+                thisHist .SetBinContent(x+1, this_val/this_enu
         
         ## Retain for use
         histList .append(thisHist)
@@ -291,13 +297,12 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                   ]
             
-    make_generator_comp(det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.png", inFileList, nameList, colzList, "Enu_true", 1, cut, \
-                        "E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)", False, minMax)
+    make_generator_comp(det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.png", inFileList, nameList, colzList, 1, cut, \
+                        False, minMax)
                 
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    inputDir="inputs"
 
     for targ in ["Ar40", "C8H8", "H2O"]:
         for flav in ["numu", "numubar", "nue", "nuebar"]:
