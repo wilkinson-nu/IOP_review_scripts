@@ -41,6 +41,28 @@ kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
 can = TCanvas("can", "can", 600, 1000)
 can .cd()
 
+def get_flav_label(flav):
+    label = "#nu"
+    if "bar" in flav: label = "#bar{"+label+"}"
+    if "mu" in flav: label += "_{#mu}"
+    if "tau" in flav: label += "_{#tau}"
+    if "e" in flav: label += "_{e}"
+    return label
+
+## In this case, ignore hydrogen...
+def get_targ_label(targ):
+    if targ == "Ar40": return "^{40}Ar"
+    if targ == "C8H8": return "^{12}C"
+    if targ == "H2O": return "^{16}O"
+    print("Unknown target", targ)
+    return targ
+
+## This is to remove hydrogen from the /nucleon cross sections NUISANCE produces...
+def get_targ_norm(inString):
+    if "C8H8" in inString: return 13/12.
+    if "H2O" in inString: return  18/16.
+    return 1.
+
 def get_chain(inputFileNames, max_files=999):
 
     print("Found", inputFileNames)
@@ -83,9 +105,9 @@ def get_chain(inputFileNames, max_files=999):
     return inTree, inFlux, inEvt, nFiles
 
 def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
-                        plotVar="q0", binning="100,0,5", cut="cc==1", \
+                        plotVar="q0", rebin=1, cut="cc==1", \
                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                        isShape=False, maxVal=None):
+                        isShape=False, minMax=None):
     isLog = False
     histList = []
     ratList  = []
@@ -100,27 +122,41 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 
     titleSize = 0.05
     labelSize = 0.04
+    histNum = 0
     
     ## Loop over the input files and make the histograms
     for inFileName in inFileList:
 
         ## Modify to use glob
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+
+        ## Correct for hydrogen in some of the samples
+        targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
-        thisHist = gDirectory.Get("this_hist")
+        thisHist = inFlux .Clone()
+        thisHist .Clear()
+        thisHist .SetNameTitle("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels)
+        
+        # thisHist = TH1D("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels, binning[0], binning[1], binning[2])
+        inTree.Draw(plotVar+">>hist_"+str(histNum), "("+cut+")*fScaleFactor")
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(1./nFiles)
+        thisHist.Scale(targNorm/float(nFiles))
 
+        ## Need to divide out the flux used
+        thisHist.Divide(inFlux)
+
+        ## Rebin if asked
+        thisHist.Rebin(rebin)
+        
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())
-
+        
         ## Retain for use
-        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
         histList .append(thisHist)
-
+        histNum += 1
+        
     ## Sort out the ratio hists
     nomHist = histList[0].Clone()
     for hist in histList:
@@ -129,16 +165,21 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
         ratList  .append(rat_hist)
         
     ## Get the maximum value
-    if not maxVal:
-        maxVal   = 0
-        for hist in histList:
-            if hist.GetMaximum() > maxVal:
-                maxVal = hist.GetMaximum()        
-        maxVal = maxVal*1.1
-        
+    maxVal   = 0
+    minVal   = 0
+    for hist in histList:
+        if hist.GetMaximum() > maxVal:
+            maxVal = hist.GetMaximum()        
+    maxVal = maxVal*1.1
+
+    if minMax:
+        minVal = minMax[0]
+        maxVal = minMax[1]
+    
     ## Actually draw the histograms
     histList[0].Draw("HIST")
     histList[0].SetMaximum(maxVal)
+    histList[0].SetMinimum(minVal)
 
     ## Unify title/label sizes
     histList[0] .GetYaxis().SetTitleSize(titleSize)
@@ -219,7 +260,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
     can .SaveAs("plots/"+outPlotName)
 
     
-def make_xsec_energy_comp_plots(inputDir="inputs/"):
+def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", minMax=None):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -231,13 +272,14 @@ def make_xsec_energy_comp_plots(inputDir="inputs/"):
                 ]
     colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
     
-    ## QE reco
-    qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
-    cc_cut = "cc==1"
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
+    sample_label = "CCINC"
+    if sample == "cc0pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC0#pi"
+
     ## Loop over configs
-    det="flat_0-20GeV"
-    flav="numu"
-    targ="Ar40"
+    det="falling_5GeV"
     
     ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
     inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
@@ -249,15 +291,15 @@ def make_xsec_energy_comp_plots(inputDir="inputs/"):
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                   ]
             
-    make_generator_comp("flat_"+flav+"_"+targ+"_Enu_CCINC_gencomp.png", inFileList, nameList, colzList, "Enu_true", "20,0,10", cc_cut, \
-                        "E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)", False)
-    
-    #        
-    #            make_generator_comp("flat_"+flav+"_"+targ+"_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
-        #                                "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
-            
+    make_generator_comp(det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.png", inFileList, nameList, colzList, "Enu_true", 1, cut, \
+                        "E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)", False, minMax)
+                
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     inputDir="inputs"
-    make_xsec_energy_comp_plots(inputDir)
+
+    for targ in ["Ar40", "C8H8", "H2O"]:
+        for flav in ["numu", "numubar", "nue", "nuebar"]:
+            for sample in ["ccinc", "cc0pi"]:
+                make_xsec_energy_comp_plots(inputDir, flav, targ, sample)
