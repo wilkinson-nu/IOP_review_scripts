@@ -1,6 +1,9 @@
 import ROOT
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory
+from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+
+## Use double precision for TTree draw
+gEnv.SetValue("Hist.Precision.1D", "double")
 
 ## No need to see the plots appear here
 gROOT.SetBatch(1)
@@ -121,12 +124,14 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 
     titleSize = 0.05
     labelSize = 0.04
-    histNum = 0
 
     ## This now only works for XSEC as a function of Enu
     plotVar = "Enu_true"
     labels="E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon)"
     if isOverEnu: labels ="E_{#nu}^{true} (GeV); d#sigma/dE_{#nu}^{true}/E_{#nu}^{true} (#times 10^{-38} cm^{2}/nucleon/GeV)"
+
+    ## This is hard-coded in the binning file
+    binning="100,0,5"
     
     ## Loop over the input files and make the histograms
     for inFileName in inFileList:
@@ -136,32 +141,34 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 
         ## Correct for hydrogen in some of the samples
         targNorm = get_targ_norm(inFileName)
-        
-        thisHist = inFlux .Clone()
-        thisHist .Clear()
-        thisHist .SetNameTitle("hist_"+str(histNum), "hist_"+str(histNum)+";"+labels)        
-        inTree.Draw(plotVar+">>hist_"+str(histNum), "("+cut+")*fScaleFactor")
+
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
 
         ## Deal with different numbers of files
-        thisHist.Scale(targNorm/float(nFiles))
-
-        ## Need to divide out the flux used
-        thisHist.Divide(inFlux)
+        ## Some funky normalization to get around some hardcoded NUISANCE stuff that assumes flux-averaged cross sections
+        thisHist.Scale(targNorm*inFlux.Integral("width")/float(nFiles), "width")
+       
+        ## Allow for shape option
+        if isOverEnu:
+            for x in range(5, thisHist.GetNbinsX()+1):
+                this_enu  = thisHist.GetXaxis().GetBinCenter(x)
+                this_val  = thisHist.GetBinContent(x)
+                this_flux = inFlux.GetBinContent(x-4)
+                thisHist .SetBinContent(x, this_val/this_enu/this_flux)
+        else:
+            for x in range(5, thisHist.GetNbinsX()+1):
+                this_val  = thisHist.GetBinContent(x)
+                this_flux = inFlux.GetBinContent(x-4)
+                thisHist .SetBinContent(x, this_val/this_flux)   
 
         ## Rebin if asked
         thisHist.Rebin(rebin)
         
-        ## Allow for shape option
-        if isOverEnu:
-            for x in range(thisHist.GetNbinsX()):
-                this_enu = thisHist.GetXaxis().GetBinCenter(x+1)
-                this_val = thisHist.GetBinContent(x+1)
-                thisHist .SetBinContent(x+1, this_val/this_enu)
-        
         ## Retain for use
         histList .append(thisHist)
-        histNum += 1
         
     ## Sort out the ratio hists
     nomHist = histList[0].Clone()
@@ -305,11 +312,18 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
+    inputDir="inputs"
 
-    for targ in ["Ar40", "C8H8", "H2O"]:
-        for flav in ["numu", "numubar", "nue", "nuebar"]:
-            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
-            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
-            make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
+    targ="C8H8"
+    flav="numu"
+    make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
+    make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
+    make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
+
+    # for targ in ["Ar40", "C8H8", "H2O"]:
+    #     for flav in ["numu", "numubar", "nue", "nuebar"]:
+    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
+    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
+    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
             
 
