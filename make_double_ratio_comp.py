@@ -462,15 +462,15 @@ if __name__ == "__main__":
         for sample in ["ccinc", "cc0pi"]:
             make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
 
-    ## flavA = "nue"
-    ## flavB = "numu"
-    ## for sample in ["ccinc", "cc0pi"]:
-    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
-    ## 
-    ## flavA = "nuebar"
-    ## flavB = "numubar"
-    ## for sample in ["ccinc", "cc0pi"]:
-    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
+    flavA = "nue"
+    flavB = "numu"
+    for sample in ["ccinc", "cc0pi"]:
+        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
+    
+    flavA = "nuebar"
+    flavB = "numubar"
+    for sample in ["ccinc", "cc0pi"]:
+        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
 
