@@ -149,7 +149,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -167,7 +167,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -185,7 +185,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -203,7 +203,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 

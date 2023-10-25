@@ -1,6 +1,9 @@
 import ROOT
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory
+from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+
+## Use double precision for TTree draw
+gEnv.SetValue("Hist.Precision.1D", "double")
 
 ## No need to see the plots appear here
 gROOT.SetBatch(1)
@@ -107,12 +110,12 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
         ## Modify to use glob
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
         ## Deal with different numbers of files
-        thisHist.Scale(1./nFiles)
+        thisHist.Scale(1./nFiles, "width")
 
         ## Allow for shape option
         if isShape: thisHist .Scale(1/thisHist.Integral())

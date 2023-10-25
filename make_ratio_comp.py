@@ -1,7 +1,10 @@
 import ROOT
 import os
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory
+from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+
+## Use double precision for TTree draw
+gEnv.SetValue("Hist.Precision.1D", "double")
 
 ## No need to see the plots appear here
 gROOT.SetBatch(1)
