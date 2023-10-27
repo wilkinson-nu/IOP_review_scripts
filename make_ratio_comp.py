@@ -307,8 +307,8 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
     inFileNumList = [inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]
@@ -316,8 +316,8 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
     inFileDenList = [inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    
@@ -350,8 +350,8 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     inFileNumList = [inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]
@@ -359,8 +359,8 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     inFileDenList = [inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    

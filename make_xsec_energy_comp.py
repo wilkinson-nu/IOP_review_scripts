@@ -304,8 +304,8 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
     inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                   ]

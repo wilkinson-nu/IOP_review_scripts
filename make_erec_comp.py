@@ -246,8 +246,8 @@ def make_T2K_erec_plots(inputDir="inputs/"):
             inFileList = [inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_NEUT562_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
@@ -282,8 +282,8 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
