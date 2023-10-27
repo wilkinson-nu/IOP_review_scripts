@@ -1,4 +1,5 @@
 import ROOT
+import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
@@ -89,6 +90,12 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
                         plotVar="q0", binning="100,0,5", cut="cc==1", \
                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
                         isShape=False, maxVal=None):
+
+    ## Skip files that already exist
+    if os.path.isfile("plots/"+outPlotName):
+        print("Skipping plots/"+outPlotName, "which already exists!")
+        return
+    
     isLog = False
     histList = []
     ratList  = []
@@ -326,7 +333,7 @@ def make_W_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_"+targ+"_W_gencomp.png", inFileList, nameList, colzList, "W", "50,0,5", ehad_cut, \
+            make_generator_comp(det+"_"+flux+"_"+targ+"_W_gencomp.png", inFileList, nameList, colzList, "W", "120,0,3", ehad_cut, \
                                 "W; d#sigma/dW (#times 10^{-38} cm^{2}/nucleon)", False)
             
 if __name__ == "__main__":
