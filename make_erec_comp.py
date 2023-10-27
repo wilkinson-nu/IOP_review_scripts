@@ -333,8 +333,8 @@ def make_W_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_"+targ+"_W_gencomp.png", inFileList, nameList, colzList, "W", "120,0,3", ehad_cut, \
-                                "W; d#sigma/dW (#times 10^{-38} cm^{2}/nucleon)", False)
+            make_generator_comp(det+"_"+flux+"_"+targ+"_W_gencomp.png", inFileList, nameList, colzList, "W", "200,0.5,3", ehad_cut, \
+                                "W (GeV); d#sigma/dW (#times 10^{-38} cm^{2}/nucleon)", False)
             
 if __name__ == "__main__":
 
