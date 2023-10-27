@@ -1,4 +1,5 @@
 import ROOT
+import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
@@ -303,8 +304,8 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
     inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                   ]
@@ -317,18 +318,11 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    inputDir="inputs"
 
-    targ="C8H8"
-    flav="numu"
-    make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
-    make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
-    make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
-
-    # for targ in ["Ar40", "C8H8", "H2O"]:
-    #     for flav in ["numu", "numubar", "nue", "nuebar"]:
-    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
-    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
-    #         make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
+    for targ in ["Ar40", "C8H8", "H2O"]:
+        for flav in ["numu", "numubar", "nue", "nuebar"]:
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
+            make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
             
 

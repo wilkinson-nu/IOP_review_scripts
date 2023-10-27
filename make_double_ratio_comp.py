@@ -356,8 +356,8 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     inFileListA = [inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
@@ -365,8 +365,8 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     inFileListB = [inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
@@ -374,8 +374,8 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     inFileListC = [inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
@@ -383,8 +383,8 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     inFileListD = [inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
@@ -418,32 +418,32 @@ def make_targ_double_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", 
     inFileListA = [inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListB = [inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListC = [inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListD = [inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]  
