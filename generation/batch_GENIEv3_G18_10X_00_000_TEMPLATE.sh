@@ -44,7 +44,7 @@ cp ${INPUTS_DIR}/${FLUX_FILE} .
 ## Need to set the GXMLPATH I think
 echo "Starting gevgen..."
 shifter -V ${PWD}:/output --entrypoint gevgen -n ${NEVENTS} -t ${TARG} -p ${NU_PDG} \
-	-.xml.gz-path ${TUNE}_CONFIG \
+	-xml-path ${TUNE}_CONFIG \
 	--cross-sections ${TUNE}_v320_splines.xml.gz \
 	--tune G18_10a_00_000 --seed ${THIS_SEED} \
 	-f ${FLUX_FILE},${FLUX_HIST} -e ${E_MIN},${E_MAX} -o ${OUTFILE}
