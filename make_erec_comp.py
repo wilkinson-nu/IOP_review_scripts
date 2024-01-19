@@ -324,7 +324,7 @@ def make_DUNE_FSI_erec_plots(inputDir="inputs/"):
                               inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
                               inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10d_00_000_1M_*_NUISFLAT.root"\
                               ]
-                enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*(E < "+threshold+")*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
+                enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*(E > "+threshold+")*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
 
                 
                 make_generator_comp(det+"_"+flux+"_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
