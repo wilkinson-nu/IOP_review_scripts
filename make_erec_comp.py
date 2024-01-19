@@ -253,8 +253,8 @@ def make_T2K_erec_plots(inputDir="inputs/"):
             inFileList = [inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_NEUT562_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
@@ -289,8 +289,8 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
@@ -301,6 +301,40 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
         
             make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.png", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "80,-1,1", ehad_cut, \
                                 "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+
+def make_DUNE_FSI_erec_plots(inputDir="inputs/"):
+
+    nameList = ["GENIE 10a",\
+                "GENIE 10b",\
+                "GENIE 10c",\
+                "GENIE 10d"\
+                ]
+    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    
+    ## QE reco
+    ehad_cut = "cc==1"
+
+    ## Loop over configs
+    for det in ["DUNEND", "DUNEFD_osc"]:
+        for flux in ["FHC_numu", "RHC_numubar"]:
+            for threshold in [0, 0.15, 0.17, 999]:
+                ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
+                inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10d_00_000_1M_*_NUISFLAT.root"\
+                              ]
+                enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*(E < "+threshold+")*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
+
+                
+                make_generator_comp(det+"_"+flux+"_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+                                    "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
+                
+                
+                make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_FSIcomp_min"+str(threshold)+".png", \
+                                    inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "60,-1,0.2", ehad_cut, \
+                                    "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+                
 
 def make_W_plots(inputDir="inputs/"):
 
@@ -339,6 +373,7 @@ def make_W_plots(inputDir="inputs/"):
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    make_T2K_erec_plots(inputDir)
-    make_DUNE_erec_plots(inputDir)
-    make_W_plots(inputDir)
+    make_DUNE_FSI_erec_plots(inputDir)
+    # make_T2K_erec_plots(inputDir)
+    # make_DUNE_erec_plots(inputDir)
+    # make_W_plots(inputDir)
