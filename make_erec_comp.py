@@ -327,12 +327,12 @@ def make_DUNE_FSI_erec_plots(inputDir="inputs/"):
                 enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*(E > "+str(threshold)+")*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
 
                 
-                make_generator_comp(det+"_"+flux+"_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
-                                    "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
+                #make_generator_comp(det+"_"+flux+"_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+                #                    "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
                 
                 
                 make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_FSIcomp_min"+str(threshold)+".png", \
-                                    inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "60,-1,0.2", ehad_cut, \
+                                    inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "100,-0.3,0.2", ehad_cut, \
                                     "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
                 
 
