@@ -1,5 +1,6 @@
 import ROOT
 import os
+from array import array
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
@@ -69,6 +70,8 @@ def get_targ_norm(inString):
     
 def get_chain(inputFileNames, max_files=999):
 
+    print(inputFileNames, len(glob(inputFileNames)))
+    
     inFile   = ROOT.TFile(glob(inputFileNames)[0], "READ")
     inFlux   = None
     inEvt    = None
@@ -110,7 +113,7 @@ def get_chain(inputFileNames, max_files=999):
 ## The double ratio is (A/B)/(C/D)
 def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD,
                            nameList, colzList, \
-                           plotVar="q0", binning="100,0,5", cut="cc==1", \
+                           plotVar="q0", bin_list=[x*0.2 for x in range(11)], cut="cc==1", \
                            labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
                            isShape=False, minMax=None):
 
@@ -143,6 +146,11 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
 
     titleSize = 0.05
     labelSize = 0.04
+
+    ## Binning info
+    binning="100,0,2"
+    bin_arr = array('d', bin_list)
+    nbins = len(bin_list)-1
     
     ## Loop over the input files and make the histograms
     for inFileName in inFileListA:
@@ -152,7 +160,8 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
-
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
+        
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
 
@@ -170,6 +179,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
 
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
@@ -188,6 +198,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
 
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
@@ -206,6 +217,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
 
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
@@ -249,7 +261,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
         maxVal = minMax[1]
     
     ## Actually draw the histograms
-    histListABCD[0].Draw("HIST")
+    histListABCD[0].Draw("][ HIST")
     histListABCD[0].SetMaximum(maxVal)
     histListABCD[0].SetMinimum(minVal)
 
@@ -266,7 +278,7 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
     for x in reversed(range(nHists)):
         histListABCD[x].SetLineWidth(3)
         histListABCD[x].SetLineColor(colzList[x])
-        histListABCD[x].Draw("HIST SAME")
+        histListABCD[x].Draw("][ HIST SAME")
 
     midline = TLine(ratListABCD[1].GetXaxis().GetBinLowEdge(1), 1, ratListABCD[1].GetXaxis().GetBinUpEdge(ratListABCD[1].GetNbinsX()), 1)
     midline .SetLineWidth(3)
@@ -301,8 +313,8 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
 
     ## Skip ratListABCD[0] as everything is a ratio w.r.t that
     ratListABCD[1] .Draw("][ HIST")
-    ratListABCD[1] .SetMaximum(1.3)
-    ratListABCD[1] .SetMinimum(0.7)
+    ratListABCD[1] .SetMaximum(1.5)
+    ratListABCD[1] .SetMinimum(0.5)
 
     ratListABCD[1] .GetYaxis().SetTitle("Ratio w.r.t. "+nameList[0])
     ratListABCD[1] .GetYaxis().CenterTitle(1)
@@ -336,121 +348,115 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
                                  flavC="nue", flavD="numu", targ="Ar40", sample="ccinc", minMax=None):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
                 "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NuWro",\
+                "NuWro SF",\
+                "NUIWG"
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    colzList = [9000, 9003, 9004, 9006, 9005, 9001, 9002]
     
-    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.12"
     sample_label = "CCINC"
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
         
-    det  = "falling_5GeV"
+    det  = "one_over_2GeV"
 
     inFileListA = [inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_NUWRO_SF_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_AR23_20i_00_000_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListB = [inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_NUWRO_SF_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_AR23_20i_00_000_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListC = [inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_NUWRO_SF_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_AR23_20i_00_000_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListD = [inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_NUWRO_SF_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_AR23_20i_00_000_1M_*_NUISFLAT.root"\
                    ]
-    
+
+    ## Initial fluxes used have 0.02 GeV binning from 0.1 to 2 GeV
+    xList = [0, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 1.0]
     make_double_ratio_comp(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.png", \
                            inFileListA, inFileListB, inFileListC, inFileListD, \
-                           nameList, colzList, "Enu_true", "20,0,5", cut, \
+                           nameList, colzList, "Enu_true", xList, cut, \
                            "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio", \
                            False, minMax)
 
 def make_targ_double_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flavA="nue", flavB="numu", sample="ccinc", minMax=None):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
                 "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NuWro LFG",\
+                "NuWro SF",\
+                "NUIWG"
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
-    
-    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
+    colzList = [9000, 9003, 9004, 9006, 9005, 9001, 9002]
+
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.1"
     sample_label = "CCINC"
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
 
-    det  = "falling_5GeV"
+    det  = "falling_2GeV"
 
     inFileListA = [inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListB = [inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListC = [inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
     inFileListD = [inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]  
     
     make_double_ratio_comp(det+"_double_targ_ratio_"+targ1+"_over_"+targ2+"_"+flavA+"_over_"+flavB+"_enu_"+sample+"_gencomp.png",
                            inFileListA, inFileListB, inFileListC, inFileListD, \
-                           nameList, colzList, "Enu_true", "20,0,5", cut, \
+                           nameList, colzList, "Enu_true", "20,0,2", cut, \
                            "E_{#nu}^{true} (GeV);("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"+get_targ_label(targ1)+"}/("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")_{"+get_targ_label(targ2)+"} "+sample_label+" ratio", \
                            False, minMax)
     
@@ -460,17 +466,17 @@ if __name__ == "__main__":
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     for targ in ["Ar40", "C8H8", "H2O"]:
         for sample in ["ccinc", "cc0pi"]:
-            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.5, 1.5])
 
-    flavA = "nue"
-    flavB = "numu"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
-    
-    flavA = "nuebar"
-    flavB = "numubar"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
+    ## flavA = "nue"
+    ## flavB = "numu"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
+    ## 
+    ## flavA = "nuebar"
+    ## flavB = "numubar"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
 
