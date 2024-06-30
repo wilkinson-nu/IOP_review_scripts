@@ -46,6 +46,9 @@ kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
 can = TCanvas("can", "can", 600, 1000)
 can .cd()
 
+can_small = TCanvas("can_small", "can_small", 600, 600)
+
+
 def get_flav_label(flav):
     label = "#nu"
     if "bar" in flav: label = "#bar{"+label+"}"
@@ -343,6 +346,192 @@ def make_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, i
     can   .Update()
     can .SaveAs("plots/"+outPlotName)
 
+def make_double_ratio_comp_noratio(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD,
+                                   nameList, colzList, \
+                                   plotVar="q0", binning="100,0,5", cut="cc==1", \
+                                   labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
+                                   isShape=False, minMax=None):
+
+    ## Skip files that already exist
+    if os.path.isfile("plots/"+outPlotName):
+        print("Skipping plots/"+outPlotName, "which already exists!")
+        return
+
+    isLog = False
+    histListA = []
+    histListB = []
+    histListC = []
+    histListD = []    
+
+    ## The combinations
+    histListAB   = []
+    histListCD   = []
+    histListABCD = []
+    ratListABCD  = []
+
+    nHists     = len(inFileListA)
+    
+    can_small  .cd()
+
+    titleSize = 0.05
+    labelSize = 0.04
+    
+    ## Loop over the input files and make the histograms
+    for inFileName in inFileListA:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Allow for shape option
+        if isShape: thisHist .Scale(1/thisHist.Integral())
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListA .append(thisHist)
+        
+    for inFileName in inFileListB:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Allow for shape option
+        if isShape: thisHist .Scale(1/thisHist.Integral())
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListB .append(thisHist)
+
+    for inFileName in inFileListC:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Allow for shape option
+        if isShape: thisHist .Scale(1/thisHist.Integral())
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListC .append(thisHist)
+
+    for inFileName in inFileListD:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Allow for shape option
+        if isShape: thisHist .Scale(1/thisHist.Integral())
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListD .append(thisHist)     
+
+    ## Make the first ratio
+    for x in range(nHists):
+        histAB = histListA[x].Clone()
+        histAB .Divide(histListB[x])
+        histListAB .append(histAB)
+
+        histCD = histListC[x].Clone()
+        histCD .Divide(histListD[x])
+        histListCD .append(histCD)
+
+    ## Make the double ratio
+    for x in range(nHists):
+        histABCD = histListAB[x].Clone()
+        histABCD .Divide(histListCD[x])
+        histListABCD.append(histABCD)
+        
+    ## Now make the second ratio
+    nomHist = histListABCD[0].Clone()
+    for x in range(nHists):
+        rat_hist = histListABCD[x].Clone()
+        rat_hist .Divide(nomHist)
+        ratListABCD .append(rat_hist)
+        
+    ## Get the maximum value
+    maxVal = 1.5
+    minVal = 0.5
+
+    if minMax:
+        minVal = minMax[0]
+        maxVal = minMax[1]
+    
+    ## Actually draw the histograms
+    histListABCD[0].Draw("HIST")
+    histListABCD[0].SetMaximum(maxVal)
+    histListABCD[0].SetMinimum(minVal)
+
+    ## Unify title/label sizes
+    histListABCD[0] .GetYaxis().SetTitleSize(titleSize)
+    histListABCD[0] .GetYaxis().SetLabelSize(labelSize)
+    histListABCD[0] .GetYaxis().SetTitleOffset(1.4)
+    
+    ## Suppress x axis title and labels
+    histListABCD[0] .GetXaxis().SetTitle("")
+    histListABCD[0] .GetXaxis().SetTitleSize(0.0)
+    histListABCD[0] .GetXaxis().SetLabelSize(0.0)
+    
+    for x in reversed(range(nHists)):
+        histListABCD[x].SetLineWidth(3)
+        histListABCD[x].SetLineColor(colzList[x])
+        histListABCD[x].Draw("HIST SAME")
+
+    midline = TLine(ratListABCD[1].GetXaxis().GetBinLowEdge(1), 1, ratListABCD[1].GetXaxis().GetBinUpEdge(ratListABCD[1].GetNbinsX()), 1)
+    midline .SetLineWidth(3)
+    midline .SetLineColor(ROOT.kBlack)
+    midline .SetLineStyle(11)
+    midline .Draw("LSAME")
+    
+    ## Now make a legend
+    dim = [0.2, 0.85, 0.98, 1.00]
+    leg = TLegend(dim[0], dim[1], dim[2], dim[3], "", "NDC")
+    leg .SetShadowColor(0)
+    leg .SetFillColor(0)
+    leg .SetLineWidth(0)
+    leg .SetTextSize(0.036)
+    leg .SetNColumns(3)
+    leg .SetLineColor(kWhite)
+    for hist in range(len(histListABCD)):
+        leg .AddEntry(histListABCD[hist], nameList[hist], "l")
+    leg .Draw("SAME")
+
+    gPad.SetLogy(0)
+    if isLog: gPad.SetLogy(1)
+    gPad.SetRightMargin(0.02)
+    gPad.SetTopMargin(0.15)
+    gPad.SetLeftMargin(0.15)
+    gPad.SetBottomMargin(0.022)
+    gPad.RedrawAxis()
+    gPad.Update()
+
+    can_small   .Update()
+    can_small .SaveAs("plots/"+outPlotName)
+
+    
     
 def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numubar", \
                                  flavC="nue", flavD="numu", targ="Ar40", sample="ccinc", minMax=None):
@@ -466,17 +655,20 @@ if __name__ == "__main__":
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     for targ in ["Ar40", "C8H8", "H2O"]:
         for sample in ["ccinc", "cc0pi"]:
-            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.5, 1.5])
-
-    ## flavA = "nue"
-    ## flavB = "numu"
-    ## for sample in ["ccinc", "cc0pi"]:
-    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
-    ## 
-    ## flavA = "nuebar"
-    ## flavB = "numubar"
-    ## for sample in ["ccinc", "cc0pi"]:
-    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
+            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+            make_flav_double_ratio_plots_noratio(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+            
+    
+            
+    flavA = "nue"
+    flavB = "numu"
+    for sample in ["ccinc", "cc0pi"]:
+        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
+    
+    flavA = "nuebar"
+    flavB = "numubar"
+    for sample in ["ccinc", "cc0pi"]:
+        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
 
