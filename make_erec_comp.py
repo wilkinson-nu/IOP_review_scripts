@@ -3,6 +3,8 @@ import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
+from make_erec_comp_ECA import make_generator_comp_noratio
+
 ## Use double precision for TTree draw
 gEnv.SetValue("Hist.Precision.1D", "double")
 
@@ -64,13 +66,20 @@ def get_chain(inputFileNames, max_files=999):
     inFile .Close()
     
     inTree = ROOT.TChain(treeName)
+    old_number = 0
     for inputFileName in glob(inputFileNames):
-
-        nFiles += 1
-        if nFiles > max_files: break
         
         inTree.Add(inputFileName)
 
+        if old_number == inTree.GetEntries():
+            print("Skipping", inputFileName, "as it has no events")
+            continue
+        old_number=inTree.GetEntries()
+        
+	nFiles += 1
+        if nFiles > max_files: break
+
+        
         ## Add the histograms up
         inFile   = ROOT.TFile(inputFileName, "READ")
         for key in inFile.GetListOfKeys():
@@ -259,12 +268,14 @@ def make_T2K_erec_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.png", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
+            #make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.png", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
+            #                    "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)", False)
+
+            make_generator_comp_noratio(det+"_"+flux+"_H2O_EnuQE_gencomp_noratio.png", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
                                 "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)", False)
-            
         
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
-                                "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+            #make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.png", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
+            #                    "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
             
 def make_DUNE_erec_plots(inputDir="inputs/"):
 
@@ -295,14 +306,16 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
-                                "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
-            
-        
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.png", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "80,-1,1", ehad_cut, \
-                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+            #make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+            #                    "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
 
-def make_DUNE_FSI_erec_plots(inputDir="inputs/"):
+            make_generator_comp_noratio(det+"_"+flux+"_Ar40_Enurec_gencomp_noratio.png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+                                        "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
+
+            #make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.png", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "80,-1,1", ehad_cut, \
+            #                    "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+
+def make_FSI_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -315,25 +328,24 @@ def make_DUNE_FSI_erec_plots(inputDir="inputs/"):
     ehad_cut = "cc==1"
 
     ## Loop over configs
-    for det in ["DUNEND", "DUNEFD_osc"]:
-        for flux in ["FHC_numu", "RHC_numubar"]:
-            for threshold in [0, 0.15, 0.17, 999]:
-                ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-                inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                              inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10d_00_000_1M_*_NUISFLAT.root"\
+    for nu_pdg in [14, -14]:
+        for e_mono in [(1,0.5,1.2), (2,1,2.4), (3,1.5,3.6), (5, 2.5, 5.5), (10, 5, 11)]:
+            for threshold in [0, 0.17, 999]:
+                inFileList = [inputDir+"/MONO_"+str(nu_pdg)+"_"+str(e_mono[0])+"GeV_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/MONO_"+str(nu_pdg)+"_"+str(e_mono[0])+"GeV_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/MONO_"+str(nu_pdg)+"_"+str(e_mono[0])+"GeV_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/MONO_"+str(nu_pdg)+"_"+str(e_mono[0])+"GeV_GENIEv3_G18_10d_00_000_1M_*_NUISFLAT.root"\
                               ]
                 enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*(E > "+str(threshold)+")*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
 
                 
-                #make_generator_comp(det+"_"+flux+"_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
-                #                    "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
+                make_generator_comp("MONO_"+str(nu_pdg)+"_"+str(e_mono[0])+"GeV_Ar40_Enurec_FSIcomp_min"+str(threshold)+".png", inFileList, nameList, colzList, enuhad, \
+                                    "400,"+str(e_mono[1])+","+str(e_mono[2]), ehad_cut, "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
                 
                 
-                make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_FSIcomp_min"+str(threshold)+".png", \
-                                    inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "100,-0.3,0.2", ehad_cut, \
-                                    "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
+                ## make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_FSIcomp_min"+str(threshold)+".png", \
+                ##                     inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "100,-0.3,0.2", ehad_cut, \
+                ##                     "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
                 
 
 def make_W_plots(inputDir="inputs/"):
@@ -373,7 +385,8 @@ def make_W_plots(inputDir="inputs/"):
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    make_DUNE_FSI_erec_plots(inputDir)
-    # make_T2K_erec_plots(inputDir)
-    # make_DUNE_erec_plots(inputDir)
+    # make_DUNE_FSI_erec_plots(inputDir)
+    # make_FSI_erec_plots(inputDir)
+    make_T2K_erec_plots(inputDir)
+    make_DUNE_erec_plots(inputDir)
     # make_W_plots(inputDir)

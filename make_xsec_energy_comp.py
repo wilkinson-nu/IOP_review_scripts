@@ -282,14 +282,12 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", isOverEnu=False, minMax=None):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
                 "SuSAv2",\
                 "NEUT",\
                 "NuWro"\
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    colzList = [9000, 9003, 9004, 9006, 9005]
     
     cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
     sample_label = "CCINC"
@@ -302,8 +300,6 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
     
     ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
     inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
                   inputDir+"/"+det+"_"+flav+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
@@ -319,10 +315,10 @@ if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
 
-    for targ in ["Ar40", "C8H8", "H2O"]:
-        for flav in ["numu", "numubar", "nue", "nuebar"]:
+    for targ in ["Ar40"]: #, "C8H8", "H2O"]:
+        for flav in ["numu", "numubar"]: #, "nue", "nuebar"]:
             make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc")
-            make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
-            make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
+            #make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
+            #make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
             
 

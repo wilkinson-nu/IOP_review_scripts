@@ -265,11 +265,14 @@ def make_double_ratio_comp_noratio(outPlotName, inFileListA, inFileListB, inFile
     histListABCD[0] .GetYaxis().SetTitleSize(titleSize)
     histListABCD[0] .GetYaxis().SetLabelSize(labelSize)
     histListABCD[0] .GetYaxis().SetTitleOffset(1.4)
+
+    histListABCD[0] .GetXaxis().SetTitleSize(titleSize)
+    histListABCD[0] .GetXaxis().SetLabelSize(labelSize)
     
     ## Suppress x axis title and labels
-    histListABCD[0] .GetXaxis().SetTitle("")
-    histListABCD[0] .GetXaxis().SetTitleSize(0.0)
-    histListABCD[0] .GetXaxis().SetLabelSize(0.0)
+    #histListABCD[0] .GetXaxis().SetTitle("")
+    #histListABCD[0] .GetXaxis().SetTitleSize(0.0)
+    #histListABCD[0] .GetXaxis().SetLabelSize(0.0)
     
     for x in reversed(range(nHists)):
         histListABCD[x].SetLineWidth(3)
@@ -300,7 +303,7 @@ def make_double_ratio_comp_noratio(outPlotName, inFileListA, inFileListB, inFile
     gPad.SetRightMargin(0.02)
     gPad.SetTopMargin(0.15)
     gPad.SetLeftMargin(0.15)
-    gPad.SetBottomMargin(0.022)
+    gPad.SetBottomMargin(0.15)
     gPad.RedrawAxis()
     gPad.Update()
     can_small   .Update()
@@ -599,8 +602,9 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
                    ]
 
     ## Initial fluxes used have 0.02 GeV binning from 0.1 to 2 GeV
-    xList = [0, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 1.0]
-    make_double_ratio_comp(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.png", \
+    # xList = [0, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 1.0]
+    xList = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
+    make_double_ratio_comp_noratio(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp_noratio_191024.png", \
                            inFileListA, inFileListB, inFileListC, inFileListD, \
                            nameList, colzList, "Enu_true", xList, cut, \
                            "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio", \
@@ -661,22 +665,27 @@ def make_targ_double_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", 
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    for targ in ["Ar40", "C8H8", "H2O"]:
-        for sample in ["ccinc", "cc0pi"]:
-            make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
-            make_flav_double_ratio_plots_noratio(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
-            
+    #for targ in ["Ar40", "C8H8", "H2O"]:
+    #    for sample in ["ccinc", "cc0pi"]:
+    targ="Ar40"
+    sample="ccinc"
+    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+
+    targ="H2O"
+    sample="cc0pi"
+    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+
     
             
-    flavA = "nue"
-    flavB = "numu"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
-    
-    flavA = "nuebar"
-    flavB = "numubar"
-    for sample in ["ccinc", "cc0pi"]:
-        make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
-        make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
+    ## flavA = "nue"
+    ## flavB = "numu"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)
+    ## 
+    ## flavA = "nuebar"
+    ## flavB = "numubar"
+    ## for sample in ["ccinc", "cc0pi"]:
+    ##     make_targ_double_ratio_plots(inputDir, "Ar40", "C8H8", flavA, flavB, sample)
+    ##     make_targ_double_ratio_plots(inputDir, "H2O", "C8H8", flavA, flavB, sample)        
 
