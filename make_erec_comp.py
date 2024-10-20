@@ -315,6 +315,58 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             #make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.png", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "80,-1,1", ehad_cut, \
             #                    "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", True)
 
+def make_DUNE_erecoverq0_plots(inputDir="inputs/"):
+
+    nameList = ["GENIE 10a",\
+                "GENIE 10b",\
+                "GENIE 10c",\
+                "CRPA",\
+                "SuSAv2",\
+                "NEUT",\
+                "NuWro"\
+                ]
+    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    
+    ## QE reco
+    cc_cut = "cc==1"
+    ehadrec = "Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
+    ehadtrue ="Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212 || abs(pdg)==2112)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
+
+    eavail = "Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<210) || (abs(pdg)>212 && abs(pdg)<2000)*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212 || abs(pdg)==211)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
+
+    binning="50,0,1"
+    
+    ## Loop over configs
+    for det in ["DUNEND"]: #, "DUNEFD_osc"]:
+        for flux in ["FHC_numu", "RHC_numubar"]:
+            ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
+            inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                          ]
+
+            make_generator_comp(det+"_"+flux+"_Ar40_ehadtrue_over_q0_gencomp.png", inFileList, nameList, colzList, ehadtrue, binning, cc_cut, \
+                                "E_{had}^{true}/q_{0}; d#sigma/#left(dE_{had}^{true}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+
+            make_generator_comp_noratio(det+"_"+flux+"_Ar40_ehadtrue_over_q0_gencomp_noratio.png", inFileList, nameList, colzList, ehadtrue, binning, cc_cut, \
+                                        "E_{had}^{true}/q_{0}; d#sigma/#left(dE_{had}^{true}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+            
+            make_generator_comp(det+"_"+flux+"_Ar40_ehadrec_over_q0_gencomp.png", inFileList, nameList, colzList, ehadrec, binning, cc_cut, \
+                                "E_{had}^{rec}/q_{0}; d#sigma/#left(dE_{had}^{rec}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+
+            make_generator_comp_noratio(det+"_"+flux+"_Ar40_ehadrec_over_q0_gencomp_noratio.png", inFileList, nameList, colzList, ehadrec, binning, cc_cut, \
+                                        "E_{had}^{rec}/q_{0}; d#sigma/#left(dE_{had}^{rec}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+
+            make_generator_comp(det+"_"+flux+"_Ar40_eavail_over_q0_gencomp.png", inFileList, nameList, colzList, eavail, binning, cc_cut, \
+                                "E_{avail}/q_{0}; d#sigma/#left(dE_{avail}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+            
+            make_generator_comp_noratio(det+"_"+flux+"_Ar40_eavail_over_q0_gencomp_noratio.png", inFileList, nameList, colzList, eavail, binning, cc_cut, \
+                                        "E_{avail}/q_{0}; d#sigma/#left(dE_{avail}/q_{0}#right) (#times 10^{-38} cm^{2}/nucleon)", False)
+            
 def make_FSI_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
