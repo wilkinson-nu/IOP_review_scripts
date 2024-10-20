@@ -439,6 +439,7 @@ if __name__ == "__main__":
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     # make_DUNE_FSI_erec_plots(inputDir)
     # make_FSI_erec_plots(inputDir)
-    make_T2K_erec_plots(inputDir)
-    make_DUNE_erec_plots(inputDir)
+    make_DUNE_erecoverq0_plots(inputDir)
+    # make_T2K_erec_plots(inputDir)
+    # make_DUNE_erec_plots(inputDir)
     # make_W_plots(inputDir)
