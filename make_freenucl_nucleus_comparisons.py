@@ -200,19 +200,21 @@ def make_q0_breakdown_CC_DUNE(inputDir="inputs/"):
     nameList = ["CC-INC",\
                 "CC-1p1h",\
                 "CC-2p2h",\
-                "CC-SPP",\
+                "CC-RPP",\
+                "CC-SIS",\
                 "CC-DIS"]
-    colzList = [9000, 9001, 9002, 9003, 9005]
-    lineList = [1, 1, 1, 1, 1]
+    colzList = [9000, 9001, 9002, 9003, 9006, 9005]
+    lineList = [1, 1, 1, 1, 1, 1]
     cutList = ["cc==1", \
 	       "cc==1 && abs(Mode) == 1 && Sum$(abs(pdg) > 3000 && abs(pdg) < 5000)==0", \
                "cc==1 && abs(Mode) == 2", \
                "cc==1 && (abs(Mode)==11 || abs(Mode)==12 || abs(Mode)==13)", \
-               "cc==1 && (abs(Mode)==21 || abs(Mode) == 26)"]
+               "cc==1 && abs(Mode)==21",\
+               "cc==1 && abs(Mode)==26"]
     targ = "Ar40"
     binning="100,0,2.5"
 
-    var_list=["q0", "q0", "q0", "q0", "q0"]
+    var_list=["q0", "q0", "q0", "q0", "q0", "q0"]
     
     ## DUNE ND
     det = "DUNEND"
@@ -221,6 +223,7 @@ def make_q0_breakdown_CC_DUNE(inputDir="inputs/"):
         flux_string = "#nu_{#mu}"
         if flux == "RHC_numubar": flux_string =	"#bar{#nu}_{#mu}"	
         inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
@@ -235,19 +238,21 @@ def make_W_breakdown_CC_DUNE(inputDir="inputs/"):
     nameList = ["CC-INC",\
                 "CC-1p1h",\
                 "CC-2p2h",\
-		"CC-SPP",\
+		"CC-RPP",\
+                "CC-SIS",\
                 "CC-DIS"]
-    colzList = [9000, 9001, 9002, 9003, 9005]
-    lineList = [1, 1, 1, 1, 1]
+    colzList = [9000, 9001, 9002, 9003, 9006, 9005]
+    lineList = [1, 1, 1, 1, 1, 1]
     cutList = ["cc==1", \
 	       "cc==1 && abs(Mode) == 1 && Sum$(abs(pdg) > 3000 && abs(pdg) < 5000)==0", \
 	       "cc==1 && abs(Mode) == 2", \
 	       "cc==1 && (abs(Mode)==11 || abs(Mode)==12 || abs(Mode)==13)", \
-	       "cc==1 && (abs(Mode)==21 || abs(Mode) == 26)"]
+	       "cc==1 && abs(Mode)==21",\
+               "cc==1 && abs(Mode)==26"]
     targ = "Ar40"
     binning="80,0,4"
 
-    var_list=["W", "W", "W", "W", "W"]
+    var_list=["W", "W", "W", "W", "W", "W"]
 
     det = "DUNEND"
     model="GENIEv3_G18_10a_00_000"
@@ -255,6 +260,7 @@ def make_W_breakdown_CC_DUNE(inputDir="inputs/"):
         flux_string = "#nu_{#mu}"
         if flux == "RHC_numubar": flux_string =	"#bar{#nu}_{#mu}"
 	inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                       inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
@@ -341,16 +347,18 @@ def make_q0_breakdown_CC_nucl(inputDir="inputs/"):
 
     nameList = ["CC-INC",\
                 "CC-QE",\
-		"CC-SPP",\
+		"CC-RPP",\
+                "CC-SIS",\
                 "CC-DIS"]
-    colzList = [9000, 9001,9003, 9005]
+    colzList = [9000, 9001, 9003, 9006, 9005]
     lineList = [1, 1, 1, 1, 1]
     cutList = ["cc==1", \
                "cc==1 && abs(Mode) == 1 && Sum$(abs(pdg) > 3000 && abs(pdg) < 5000)==0", \
                "cc==1 && (abs(Mode)==11 || abs(Mode)==12 || abs(Mode)==13)", \
-               "cc==1 && (abs(Mode)==21 || abs(Mode) == 26)"]
+               "cc==1 && abs(Mode)==21", \
+               "cc==1 && abs(Mode)==26"]
     binning="100,0,2.5"
-    var_list=["q0", "q0", "q0", "q0", "q0"]
+    var_list=["q0", "q0", "q0", "q0", "q0", "q0"]
     det = "DUNEND"
     model="GENIEv3_G18_10a_00_000"
 
@@ -360,6 +368,7 @@ def make_q0_breakdown_CC_nucl(inputDir="inputs/"):
         
 	for targ in ["neutron", "proton"]:
             inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_"+model+"_1M_*_NUISFLAT.root"]
