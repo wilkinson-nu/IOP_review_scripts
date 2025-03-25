@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --image=docker:wilkinsonnu/nuisance_project:genie_v3.2.0_crpa
-#SBATCH --account=m4045
+#SBATCH --account=dune
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
 #SBATCH --time=1440

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --image=docker:wilkinsonnu/nuisance_project:nuwro_19.02.2
-#SBATCH --account=m4045
+#SBATCH --account=dune
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
 #SBATCH --time=1440
@@ -49,6 +49,10 @@ elif [[ $TARG == "1000060120[0.9231],1000010010[0.0769]" ]]; then
     SHORT_TARG="CH"
 elif [[ $TARG == "1000180400[1.00]" ]]; then
     SHORT_TARG="Ar"
+elif [[ $TARG == "1000060120[0.85714],1000010010[0.14286]" ]]; then
+    SHORT_TARG="CH2"
+elif [[ $TARG == "1000060120[1.00]" ]]; then
+    SHORT_TARG="C"
 else
     echo "Don't know how to parse target ${TARG}... exiting..."
     exit

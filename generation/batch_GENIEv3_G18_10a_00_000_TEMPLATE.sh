@@ -2,7 +2,7 @@
 #SBATCH --image=docker:wilkinsonnu/nuisance_project:genie_v3.2.0
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
-#SBATCH --time=1440
+#SBATCH --time=720
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --mem=4GB

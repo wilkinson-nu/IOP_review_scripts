@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --image=docker:wilkinsonnu/nuisance_project:neut_5.6.2
-#SBATCH --account=m4045
+#SBATCH --account=dune
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
 #SBATCH --time=1440
@@ -61,6 +61,16 @@ elif [[ $TARG == "1000180400[1.00]" ]]; then
     PROTONS=18
     NEUTRONS=22
     NUCLEONS=40
+    HYDROGEN=0
+elif [[ $TARG == "1000060120[0.85714],1000010010[0.14286]" ]]; then
+    PROTONS=6
+    NEUTRONS=6
+    NUCLEONS=12
+    HYDROGEN=2
+elif [[ $TARG == "1000060120[1.00]" ]]; then
+    PROTONS=6
+    NEUTRONS=6
+    NUCLEONS=12
     HYDROGEN=0
 else
     echo "Don't know how to parse target ${TARG}... exiting..."
