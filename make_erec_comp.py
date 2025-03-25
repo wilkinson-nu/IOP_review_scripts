@@ -20,8 +20,6 @@ gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetOptFit(0)
 TGaxis.SetMaxDigits(4)
-gStyle.SetLineStyleString(11,"40 20 40 20")
-gStyle.SetLineStyleString(12,"20 10 20 10")
 
 gStyle.SetTextSize(0.05)
 gStyle.SetLabelSize(0.05,"xyzt")
@@ -38,9 +36,6 @@ gStyle.SetLineWidth(3)
 
 ## Sort out the position of the y axis exponent...
 TGaxis.SetExponentOffset(-0.06, 0., "y")
-
-## Make some colorblind friendly objects
-## From: https://personal.sron.nl/~pault/#sec:qualitative
 
 def make_T2K_erec_plots(inputDir="inputs/"):
 
