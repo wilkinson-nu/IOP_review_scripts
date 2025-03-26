@@ -246,8 +246,8 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
 
     ## Skip ratList[0] as everything is a ratio w.r.t that
     ratList[1] .Draw("][ HIST")
-    ratList[1] .SetMaximum(ratLimits[1])
-    ratList[1] .SetMinimum(ratLimits[0])
+    ratList[1] .SetMaximum(yRatLimits[1])
+    ratList[1] .SetMinimum(yRatLimits[0])
 
     ratList[1] .GetYaxis().SetTitle("#frac{Model}{"+nameList[0]+"}")
     ratList[1] .GetYaxis().CenterTitle(1)
