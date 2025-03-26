@@ -13,8 +13,6 @@ gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetOptFit(0)
 TGaxis.SetMaxDigits(4)
-gStyle.SetLineStyleString(11,"40 20 40 20")
-gStyle.SetLineStyleString(12,"20 10 20 10")
 
 gStyle.SetTextSize(0.06)
 gStyle.SetLabelSize(0.06,"xyzt")
@@ -409,3 +407,128 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     
     ## This makes the plots in a standard form
     make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits)
+
+
+## The double ratio is (A/B)/(C/D)
+def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD, \
+                                     nameList, colzList, plotVar, binning, cut="cc==1", \
+                                     labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
+                                     legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
+    
+    ## Skip files that already exist
+    if os.path.isfile("plots/"+outPlotName):
+        print("Skipping plots/"+outPlotName, "which already exists!")
+        return
+
+    isLog = False
+    histListA = []
+    histListB = []
+    histListC = []
+    histListD = []    
+
+    ## The combinations
+    histListAB   = []
+    histListCD   = []
+    histListABCD = []
+    ratListABCD  = []
+
+    nHists     = len(inFileListA)
+    
+    ## Binning info
+    fine_binning="100,0,2"
+    bin_arr = array('d', binning)
+    nbins = len(binning)-1
+    
+    ## Loop over the input files and make the histograms
+    for inFileName in inFileListA:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
+        
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListA .append(thisHist)
+        
+    for inFileName in inFileListB:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListB .append(thisHist)
+
+    for inFileName in inFileListC:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListC .append(thisHist)
+
+    for inFileName in inFileListD:
+        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
+        targNorm = get_targ_norm(inFileName)
+        
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        thisHist = gDirectory.Get("this_hist")
+        thisHist .SetDirectory(0)
+        thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
+
+        ## Deal with different numbers of files
+        thisHist.Scale(targNorm/float(nFiles))
+
+        ## Retain for use
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
+        histListD .append(thisHist)     
+
+    ## Make the first ratio
+    for x in range(nHists):
+        histAB = histListA[x].Clone()
+        histAB .Divide(histListB[x])
+        histListAB .append(histAB)
+
+        histCD = histListC[x].Clone()
+        histCD .Divide(histListD[x])
+        histListCD .append(histCD)
+
+    ## Make the double ratio
+    for x in range(nHists):
+        histABCD = histListAB[x].Clone()
+        histABCD .Divide(histListCD[x])
+        histListABCD.append(histABCD)
+
+    ## Sort out the plot colours
+    for x in range(nHists): histListABCD[x].SetLineColor(colzList[x])
+
+    ## Sort out the ratio hists
+    nomHist = histListABCD[0].Clone()
+    for hist in histListABCD:
+        rat_hist = hist.Clone()
+        rat_hist .Divide(nomHist)
+        ratListABCD  .append(rat_hist)
+    
+    ## This makes the plots in a standard form
+    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits)
