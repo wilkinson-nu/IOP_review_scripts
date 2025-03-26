@@ -109,8 +109,8 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             #make_generator_comp_noratio(det+"_"+flux+"_Ar40_Enurec_gencomp_noratio.pdf", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
             #                            "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
 
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "80,-1,1", ehad_cut, \
-                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", isShape=True)
+            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "120,-1,0.2", ehad_cut, \
+                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], [0,2], isShape=True)
 
 if __name__ == "__main__":
 

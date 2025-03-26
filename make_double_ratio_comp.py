@@ -21,8 +21,6 @@ gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetOptFit(0)
 TGaxis.SetMaxDigits(4)
-gStyle.SetLineStyleString(11,"40 20 40 20")
-gStyle.SetLineStyleString(12,"20 10 20 10")
 
 gStyle.SetTextSize(0.05)
 gStyle.SetLabelSize(0.05,"xyzt")
@@ -39,22 +37,6 @@ gStyle.SetLineWidth(3)
 
 ## Sort out the position of the y axis exponent...
 TGaxis.SetExponentOffset(-0.06, 0., "y")
-
-## Make some colorblind friendly objects
-## From: https://personal.sron.nl/~pault/#sec:qualitative
-kkBlue    = TColor(9000,   0/255., 119/255., 187/255.)
-kkCyan    = TColor(9001,  51/255., 187/255., 238/255.)
-kkTeal    = TColor(9002,   0/255., 153/255., 136/255.)
-kkOrange  = TColor(9003, 238/255., 119/255.,  51/255.)
-kkRed     = TColor(9004, 204/255.,  51/255.,  17/255.)
-kkMagenta = TColor(9005, 238/255.,  51/255., 119/255.)
-kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
-
-can = TCanvas("can", "can", 600, 1000)
-can .cd()
-
-can_small = TCanvas("can_small", "can_small", 600, 600)
-
 
 def get_flav_label(flav):
     label = "#nu"
@@ -130,7 +112,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
                                      nameList, colzList, "Enu_true", xList, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
                                      get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio",
-                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.7, 1.3]):
+                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.7, 1.3])
     
 if __name__ == "__main__":
 

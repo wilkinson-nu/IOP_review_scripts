@@ -2,6 +2,7 @@ import ROOT
 import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+from array import array
 
 ## Use double precision for TTree draw
 gEnv.SetValue("Hist.Precision.1D", "double")
@@ -435,7 +436,7 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
     nHists     = len(inFileListA)
     
     ## Binning info
-    fine_binning="100,0,2"
+    fine_binning="200,0,2"
     bin_arr = array('d', binning)
     nbins = len(binning)-1
     
