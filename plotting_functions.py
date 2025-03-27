@@ -22,6 +22,7 @@ gStyle.SetTitleSize(0.07,"xyzt")
 gStyle.SetPadTickX(1)
 gStyle.SetPadTickY(1)
 gStyle.SetNdivisions(505, "XY")
+gStyle.SetLineStyleString(11,"40 20 40 20")
 
 gROOT .ForceStyle()
 
@@ -83,45 +84,16 @@ def get_chain(inputFileNames, max_files=999):
 
     return inTree, inFlux, inEvt, nFiles
 
+def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], topMidLine=False):
 
-def make_generator_comp_noratio(outPlotName, inFileList, nameList, colzList, \
-                                plotVar="q0", binning="100,0,5", cut="cc==1", \
-                                labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-			        legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], isShape=False, isLog=False):
+    isLog=False
     
-    ## Skip files that already exist
-    if os.path.isfile("plots/"+outPlotName):
-        print("Skipping plots/"+outPlotName, "which already exists!")
-        return
-
     can_small = TCanvas("can_small", "can_small", 600, 600)
     can_small.cd()
-
-    histList = []
 
     titleSize = 0.07
     labelSize = 0.06
     
-    ## Loop over the input files and make the histograms
-    for inFileName in inFileList:
-
-        ## Modify to use glob
-        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
-        
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
-        thisHist = gDirectory.Get("this_hist")
-        thisHist .SetDirectory(0)
-
-        ## Deal with different numbers of files
-        thisHist.Scale(1./nFiles, "width")
-
-        ## Allow for shape option
-        if isShape: thisHist .Scale(1/thisHist.Integral())
-
-        ## Retain for use
-        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
-        histList .append(thisHist)
-
     ## Sort out the yLimits
     minVal = yLimits[0]
     maxVal = yLimits[1]
@@ -148,10 +120,14 @@ def make_generator_comp_noratio(outPlotName, inFileList, nameList, colzList, \
     
     for x in reversed(range(len(histList))):
         histList[x].SetLineWidth(3)
-        histList[x].SetLineColor(colzList[x])
         histList[x].Draw("HIST SAME")
 
-    
+    midline = TLine(histList[0].GetXaxis().GetBinLowEdge(1), 1, histList[0].GetXaxis().GetBinUpEdge(histList[0].GetNbinsX()), 1)
+    midline .SetLineWidth(3)
+    midline .SetLineColor(ROOT.kBlack)
+    midline .SetLineStyle(11)
+    if topMidLine: midline.Draw("LSAME")
+        
     ## Now make a legend
     leg = TLegend(legDim[0], legDim[1], legDim[2], legDim[3], "", "NDC")
     leg .SetShadowColor(0)
@@ -174,7 +150,7 @@ def make_generator_comp_noratio(outPlotName, inFileList, nameList, colzList, \
     can_small .SaveAs("plots/"+outPlotName)
 
 
-def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
+def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], topMidLine=False):
 
     isLog = False
     can = TCanvas("can", "can", 800, 800)
@@ -190,7 +166,12 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
 
     titleSize = 0.07
     labelSize = 0.06
-            
+
+    midline = TLine(ratList[1].GetXaxis().GetBinLowEdge(1), 1, ratList[1].GetXaxis().GetBinUpEdge(ratList[1].GetNbinsX()), 1)
+    midline .SetLineWidth(3)
+    midline .SetLineColor(ROOT.kBlack)
+    midline .SetLineStyle(11)
+    
     ## Set the y limits
     minVal = yLimits[0]
     maxVal = yLimits[1]
@@ -231,6 +212,9 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
         leg .AddEntry(histList[hist], nameList[hist], "l")
     leg .Draw("SAME")
 
+    ## For ratio plots
+    if topMidLine: midline.Draw("LSAME")
+    
     gPad.SetLogy(0)
     if isLog: gPad.SetLogy(1)
     gPad.SetRightMargin(0.03)
@@ -263,10 +247,6 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
         ratList[x].SetLineWidth(3)
         ratList[x].Draw("][ HIST SAME")
 
-    midline = TLine(ratList[1].GetXaxis().GetBinLowEdge(1), 1, ratList[1].GetXaxis().GetBinUpEdge(ratList[1].GetNbinsX()), 1)
-    midline .SetLineWidth(3)
-    midline .SetLineColor(ROOT.kBlack)
-    midline .SetLineStyle(11)
     midline .Draw("LSAME")
     
     ## Save
@@ -299,7 +279,7 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
         ## Modify to use glob
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "("+cut+")*fScaleFactor*1E38")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -339,7 +319,7 @@ def get_targ_norm(inString):
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
+                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], include_ratio=True):
 
     ## Skip files that already exist
     if os.path.isfile("plots/"+outPlotName):
@@ -360,7 +340,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ## Correct for hydrogen in some of the samples
         targNorm = get_targ_norm(inFileName)
 
-        inTree.Draw(plotVar+">>hist_num("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>hist_num("+binning+")", "InputWeight*("+cut+")*fScaleFactor")
         thisHist = gDirectory.Get("hist_num")
         thisHist .SetDirectory(0)
 
@@ -377,7 +357,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         targNorm = get_targ_norm(inFileName)
 
-        inTree.Draw(plotVar+">>hist_den("+binning+")", "("+cut+")*fScaleFactor")
+        inTree.Draw(plotVar+">>hist_den("+binning+")", "InputWeight*("+cut+")*fScaleFactor")
         thisHist = gDirectory.Get("hist_den")
         thisHist .SetDirectory(0)
 
@@ -386,7 +366,6 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         ## Retain for use
         histDenList .append(thisHist)
-        histNum += 1
         
     ## Make the first ratio
     for x in range(len(histNumList)):
@@ -399,7 +378,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
     ## Sort out the ratio hists
     nomHist = histList[0].Clone()
-    nomHist .Rebin(2)
+    # nomHist .Rebin(2)
     for hist in histList:
         rat_hist = hist.Clone()
         # rat_hist .Rebin(2)
@@ -407,9 +386,10 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ratList  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=True)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=True)
 
-
+    
 ## The double ratio is (A/B)/(C/D)
 def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD, \
                                      nameList, colzList, plotVar, binning, cut="cc==1", \
@@ -445,7 +425,7 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
         thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
@@ -461,7 +441,7 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
         thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
@@ -477,7 +457,7 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
         thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
@@ -493,7 +473,7 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
         targNorm = get_targ_norm(inFileName)
         
-        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "("+cut+")*fScaleFactor*1E38")
+        inTree.Draw(plotVar+">>this_hist("+fine_binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
         thisHist = thisHist.Rebin(nbins, "this_hist", bin_arr)
@@ -532,4 +512,4 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         ratListABCD  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits)
+    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits, topMidLine=True)

@@ -39,16 +39,6 @@ gStyle.SetLineWidth(3)
 ## Sort out the position of the y axis exponent...
 TGaxis.SetExponentOffset(-0.06, 0., "y")
 
-## Make some colorblind friendly objects
-## From: https://personal.sron.nl/~pault/#sec:qualitative
-kkBlue    = TColor(9000,   0/255., 119/255., 187/255.)
-kkCyan    = TColor(9001,  51/255., 187/255., 238/255.)
-kkTeal    = TColor(9002,   0/255., 153/255., 136/255.)
-kkOrange  = TColor(9003, 238/255., 119/255.,  51/255.)
-kkRed     = TColor(9004, 204/255.,  51/255.,  17/255.)
-kkMagenta = TColor(9005, 238/255.,  51/255., 119/255.)
-kkGray    = TColor(9006, 187/255., 187/255., 187/255.)
-
 can = TCanvas("can", "can", 600, 1000)
 can .cd()
 
@@ -71,45 +61,39 @@ def get_targ_label(targ):
 def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", minMax=[0.6, 1.4]):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
                 "SuSAv2",\
                 "NEUT",\
                 "NuWro"\
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    colzList = [9000, 9003, 9004, 9006, 9005]
     
-    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
+    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.12"
     sample_label = "CCINC"
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
         
-    det  = "falling_5GeV"
+    det  = "one_over_2GeV" #falling_5GeV"
 
     inFileNumList = [inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]
 
     inFileDenList = [inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT2.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT2.root",\
+                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    
 
     make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
-                              nameList, colzList, "Enu_true", "20,0,5", cut, \
+                              nameList, colzList, "Enu_true", "40,0,2", cut, \
                               "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
-                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=minMax, yRatLimits=[0.6, 1.4])
+                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=minMax, yRatLimits=[0.8, 1.2])
 
     
 def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc", minMax=[0.6, 1.4]):
@@ -158,16 +142,16 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    for targ in ["Ar40", "C8H8", "H2O"]:
-        for sample in ["ccinc", "cc0pi"]:
-            make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.5])
-            make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.5])
-            make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.8])
-            make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.8])
+    for targ in ["Ar40", "H2O"]:
+        for sample in ["ccinc"]:
+            make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.9])
+            make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.9])
+            # make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.8])
+            # make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.8])
 
-    for flav in ["numu", "numubar", "nue", "nuebar"]:
-        for sample in ["ccinc", "cc0pi"]:
-            make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flav, sample)
-            make_targ_ratio_plots(inputDir, "H2O", "C8H8", flav, sample)
+    ## for flav in ["numu", "numubar", "nue", "nuebar"]:
+    ##     for sample in ["ccinc", "cc0pi"]:
+    ##         make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flav, sample)
+    ##         make_targ_ratio_plots(inputDir, "H2O", "C8H8", flav, sample)
 
 

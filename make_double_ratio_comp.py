@@ -112,17 +112,17 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
                                      nameList, colzList, "Enu_true", xList, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
                                      get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio",
-                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.7, 1.3])
+                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.6, 1.1])
     
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     targ="Ar40"
     sample="ccinc"
-    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.75, 1.35])
 
     targ="H2O"
     sample="cc0pi"
-    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.7, 1.3])
+    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.75, 1.35])
 
 

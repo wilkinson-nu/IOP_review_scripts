@@ -3,7 +3,7 @@ import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
-from plotting_functions import make_generator_comp, make_generator_comp_noratio
+from plotting_functions import make_generator_comp
 ## def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 ##                         plotVar="q0", binning="100,0,5", cut="cc==1", \
 ##                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
@@ -109,8 +109,8 @@ def make_ehad_plots(inputDir="inputs/"):
         make_generator_comp(det+"_"+flux+"_"+targ+"_ehad_gencomp.pdf", inFileList, nameList, colzList, ehad, "100,0,2", ccinc, \
                             "E_{had} (GeV); d#sigma/dE_{had} (#times 10^{-38} cm^{2}/GeV/nucleon)")
                 
-        make_generator_comp(det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, "("+ehad+")/q0", "120,0.8,1.1", ccinc +"&& ("+ehad+")!=0", \
-                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0,2])
+        make_generator_comp(det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, "("+ehad+")/q0", "124,0.79,1.1", ccinc +"&& ("+ehad+")!=0", \
+                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0, None], [0,2.2])
 
         
     ## Now T2K
@@ -129,7 +129,7 @@ def make_ehad_plots(inputDir="inputs/"):
                             "E_{had} (GeV); d#sigma/dE_{had} (#times 10^{-38} cm^{2}/GeV/nucleon)")
 
 	make_generator_comp(det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, "("+ehad+")/q0", "120,0,1.2", cc0pi, \
-                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0,2])
+                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0, None], [0,2.2])
 
         
         
