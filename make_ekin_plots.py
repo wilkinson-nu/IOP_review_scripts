@@ -47,31 +47,37 @@ def make_DUNE_Ekin_plots(inputDir="inputs/"):
     
     ## Loop over configs
     for det in ["DUNEND", "T2KND"]: #"DUNEFD_osc"]:
+
+        targ = "Ar40"
+        if det == "T2KND": targ="H2O"
+        
         for flux in ["FHC_numu", "RHC_numubar"]:
-
-            for pdg in [2212]: #211, -211, 13, -13, 2212, 11, -11, 111, 22, 321, -321, 311]:
-
+            
+            for pdg in [2212, -211, 211]: #211, -211, 13, -13, 2212, 11, -11, 111, 22, 321, -321, 311]:
+                
                 pdg_cut = "pdg=="+str(pdg)
-
+                
                 ## K0 is a special case
                 if pdg == 311: pdg_cut = "(pdg==311|pdg==130|pdg==310)"
                 
-            ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-            inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
-                          ]
-            
-            make_generator_comp(det+"_"+flux+"_"+str(pdg)+"_Ekin_gencomp.png", inFileList, nameList, colzList, mom, "120,0,3", pdg_cut, \
-                                "p (GeV/c); d#sigma/dp (#times 10^{-38} cm^{2}/nucleon)")
-            
+                ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
+                inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                              inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+                              ]
+                
+                make_generator_comp(det+"_"+flux+"_"+targ+"_"+str(pdg)+"_mom_gencomp.png", inFileList, nameList, colzList, mom, "100,0,1", pdg_cut, \
+                                    "p (GeV/c); d#sigma/dp (#times 10^{-38} cm^{2}/nucleon)")
+                
             
             
 if __name__ == "__main__":
 
     inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     make_DUNE_Ekin_plots(inputDir)
+
+#  LocalWords:  numubar
