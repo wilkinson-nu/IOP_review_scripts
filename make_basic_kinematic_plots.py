@@ -67,7 +67,7 @@ def make_multiplicity_plots(inputDir="inputs/"):
                               ]
                 
                 make_generator_comp(det+"_"+flux+"_"+targ+"_n"+str(pdg)+"_gencomp.png", inFileList, nameList, colzList, npdg_var, "10,0,10", not_h_cut, \
-                                    "N(pdg == "+pdg"); d#sigma/dN (#times 10^{-38} cm^{2}/nucleon)")
+                                    "N(pdg == "+pdg+"); d#sigma/dN (#times 10^{-38} cm^{2}/nucleon)")
 
 
                 
