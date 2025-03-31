@@ -128,7 +128,7 @@ def make_photon_sumE(inputDir="inputs/"):
     colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
     
     ## Ekin cut
-    sumE = "Sum$(*pdg==22)*E)"
+    sumE = "Sum$(pdg==22)*E)"
     
     ## Loop over configs
     for det in ["DUNEND", "T2KND"]: #"DUNEFD_osc"]:
