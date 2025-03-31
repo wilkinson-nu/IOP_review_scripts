@@ -43,8 +43,10 @@ def make_DUNE_Ekin_plots(inputDir="inputs/"):
     ## Ekin cut
     ekin = "E - sqrt(E*E - px*px - py*py - pz*pz)"
 
+    mom = "sqrt(px*px - py*py - pz*pz)"
+    
     ## Loop over configs
-    for det in ["DUNEND", "DUNEFD_osc"]:
+    for det in ["DUNEND", "T2KND"]: #"DUNEFD_osc"]:
         for flux in ["FHC_numu", "RHC_numubar"]:
 
             for pdg in [2212]: #211, -211, 13, -13, 2212, 11, -11, 111, 22, 321, -321, 311]:
@@ -64,8 +66,8 @@ def make_DUNE_Ekin_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_"+str(pdg)+"_Ekin_gencomp.png", inFileList, nameList, colzList, ekin, "50,0,5", pdg_cut, \
-                                "E_{kin} (GeV); d#sigma/dE_{kin} (#times 10^{-38} cm^{2}/nucleon)")
+            make_generator_comp(det+"_"+flux+"_"+str(pdg)+"_Ekin_gencomp.png", inFileList, nameList, colzList, mom, "120,0,3", pdg_cut, \
+                                "p (GeV/c); d#sigma/dp (#times 10^{-38} cm^{2}/nucleon)")
             
             
             
