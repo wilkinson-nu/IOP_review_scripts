@@ -346,6 +346,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
 
         ## Retain for use
         histNumList .append(thisHist)
@@ -363,6 +364,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
 
         ## Deal with different numbers of files
         thisHist.Scale(targNorm/float(nFiles))
+        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
 
         ## Retain for use
         histDenList .append(thisHist)

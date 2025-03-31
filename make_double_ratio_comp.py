@@ -105,14 +105,14 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
 
     ## Initial fluxes used have 0.02 GeV binning from 0.1 to 2 GeV
     # xList = [0, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 1.0]
-    xList = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
+    xList = [0.11, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
 
     make_generator_double_ratio_comp(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.pdf",
                                      inFileListA, inFileListB, inFileListC, inFileListD, \
                                      nameList, colzList, "Enu_true", xList, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
                                      get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio",
-                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.6, 1.1])
+                                     [0.65, 0.5, 0.85, 0.93], yLimits, yRatLimits=[0.6, 1.15])
     
 if __name__ == "__main__":
 

@@ -3,7 +3,7 @@ import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
-from plotting_functions import make_generator_comp, make_generator_comp_noratio
+from plotting_functions import make_generator_comp
 ## def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
 ##                         plotVar="q0", binning="100,0,5", cut="cc==1", \
 ##                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
@@ -68,9 +68,6 @@ def make_T2K_erec_plots(inputDir="inputs/"):
             make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.pdf", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
                                 "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)")
 
-            #make_generator_comp_noratio(det+"_"+flux+"_H2O_EnuQE_gencomp_noratio.pdf", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
-            #                    "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)", False)
-        
             make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.pdf", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
                                 "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", isShape=True)
             
@@ -106,11 +103,8 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.pdf", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
                                 "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)")
 
-            #make_generator_comp_noratio(det+"_"+flux+"_Ar40_Enurec_gencomp_noratio.pdf", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
-            #                            "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)", False)
-
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "120,-1,0.2", ehad_cut, \
-                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2], isShape=True)
+            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "70,-0.5,0.2", ehad_cut, \
+                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2.2], isShape=True)
 
 if __name__ == "__main__":
 
