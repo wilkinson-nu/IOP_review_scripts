@@ -61,7 +61,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     nameList = ["GENIE 10a",\
                 "CRPA",\
                 "SuSAv2",\
-                "NEUT",\
+                "NEUT 580",\
                 "NuWro"\
                 ]
     colzList = [9000, 9003, 9004, 9006, 9005]
@@ -78,28 +78,28 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     inFileListA = [inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G18_10*_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavA+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavA+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListB = [inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G18_10*_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavB+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavB+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListC = [inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G18_10*_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavC+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavC+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
 
     inFileListD = [inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G18_10*_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                   inputDir+"/"+det+"_"+flavD+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                    inputDir+"/"+det+"_"+flavD+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                    ]
 
@@ -107,7 +107,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     # xList = [0, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 1.0]
     xList = [0.11, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0]
 
-    make_generator_double_ratio_comp(det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.pdf",
+    make_generator_double_ratio_comp("plots/"+det+"_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp_NEWNEUT.pdf",
                                      inFileListA, inFileListB, inFileListC, inFileListD, \
                                      nameList, colzList, "Enu_true", xList, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
@@ -123,6 +123,10 @@ if __name__ == "__main__":
 
     targ="H2O"
     sample="cc0pi"
+    make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.75, 1.35])
+
+    targ="H2O"
+    sample="ccinc"
     make_flav_double_ratio_plots(inputDir, "nuebar", "numubar", "nue", "numu", targ, sample, [0.75, 1.35])
 
 
