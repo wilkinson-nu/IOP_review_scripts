@@ -87,7 +87,7 @@ shifter -V ${PWD}:/output --entrypoint nuisflat -f GenericVectors -i NEUT:${OUTF
 echo "Complete"
 
 ## Copy back the important files
-cp ${TEMPDIR}/${OUTFILE} ${OUTDIR}/.
+# cp ${TEMPDIR}/${OUTFILE} ${OUTDIR}/.
 cp ${TEMPDIR}/${OUTFILE/.root/_NUISFLAT.root} ${OUTDIR}/.
 
 ## Clean up
