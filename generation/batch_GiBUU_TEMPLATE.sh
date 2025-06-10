@@ -3,10 +3,10 @@
 #SBATCH --account=dune
 #SBATCH --qos=shared
 #SBATCH --constraint=cpu
-#SBATCH --time=720
+#SBATCH --time=1440
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=4GB
+#SBATCH --mem=8GB
 #SBATCH --module=none
 
 ## These change for each job
@@ -73,6 +73,7 @@ elif [[ $TARG == "1000180400[1.00]" ]]; then
     PROTONS=18
     NUCLEONS=40
     HYDROGEN=0
+    NUM_ENSEMBLES=16000
     FLATINPUTSTRING=${OUTFILE}
 elif [[ $TARG == "1000060120[0.85714],1000010010[0.14286]" ]]; then
     PROTONS=6
@@ -114,13 +115,12 @@ sed -i "s/_NUM_ENSEMBLES_/${NUM_ENSEMBLES}/g" ${INCARDH}
 
 ## Process the main (nuclear) card
 shifter -V ${PWD}:/output --entrypoint /opt/generators/GiBUU/GiBUU.x < ${INCARD}
-shifter -V ${PWD}:/output --entrypoint PrepareGiBUU -i EventOutput.Pert.00000001.root -f gibuu_flux.dat -o ${OUTFILE} &> /dev/null
+shifter -V ${PWD}:/output --entrypoint PrepareGiBUU -i EventOutput.Pert.00000001.root -f gibuu_flux.dat -o ${OUTFILE} > /dev/null
 
 ## If there's hydrogen in the target, also process that card
 if (( ${HYDROGEN} != 0 )); then
-    rm EventOutput.Pert.00000001.root
     shifter -V ${PWD}:/output --entrypoint /opt/generators/GiBUU/GiBUU.x < ${INCARDH}
-    shifter -V ${PWD}:/output --entrypoint PrepareGiBUU -i EventOutput.Pert.00000001.root -f gibuu_flux.dat -o ${OUTFILEH} &> /dev/null
+    shifter -V ${PWD}:/output --entrypoint PrepareGiBUU -i EventOutput.Pert.00000001.root -f gibuu_flux.dat -o ${OUTFILEH} > /dev/null
 fi
 
 ## Need to set the input here depending on whether the hydrogen sample needs to be included...
