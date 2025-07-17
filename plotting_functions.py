@@ -23,6 +23,7 @@ gStyle.SetPadTickX(1)
 gStyle.SetPadTickY(1)
 gStyle.SetNdivisions(505, "XY")
 gStyle.SetLineStyleString(11,"40 20 40 20")
+gStyle.SetLineStyleString(12,"20 10 20 10")
 
 gROOT .ForceStyle()
 
@@ -108,7 +109,7 @@ def get_chain(inputFileNamesWithNorm, max_files=999):
     return inTree, inFlux, inEvt, nFiles, norm
 
 def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], \
-                        yLimits=[0, None], topMidLine=False, isLog=False, lineStyle="C"):
+                        yLimits=[0, None], topMidLine=False, isLog=False, lineStyle="C", legHeader=None):
     
     can_small = TCanvas("can_small", "can_small", 600, 600)
     can_small.cd()
@@ -144,7 +145,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     histList[0] .GetXaxis().SetTitleSize(titleSize)
     histList[0] .GetXaxis().SetLabelSize(labelSize)
     
-    for x in range(len(histList)):
+    for x in reversed(range(len(histList))):
         histList[x].SetLineWidth(3)
         histList[x].Draw(lineStyle+"HIST SAME")
 
@@ -161,6 +162,8 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     leg .SetLineWidth(0)
     leg .SetTextSize(0.06)
     leg .SetLineColor(kWhite)
+    if legHeader: 
+        leg .SetHeader(legHeader)
     for hist in range(len(histList)):
         leg .AddEntry(histList[hist], nameList[hist], "l")
     leg .Draw("SAME")
@@ -178,7 +181,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
 
 def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], \
                         yLimits=[0, None], yRatLimits=[0.4, 1.6], topMidLine=False, isLog=False, \
-                        rat_title_num="Model", lineStyle="C"):
+                        rat_title_num="Model", lineStyle="C", legHeader=None):
 
     can = TCanvas("can", "can", 800, 800)
 
@@ -228,10 +231,10 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     histList[0] .GetXaxis().SetTitleSize(0.0)
     histList[0] .GetXaxis().SetLabelSize(0.0)
     
-    for x in range(len(histList)):
+    for x in reversed(range(len(histList))):
         histList[x].SetLineWidth(3)
         histList[x].Draw(lineStyle+"HIST SAME")
-    
+        
     ## Now make a legend
     leg = TLegend(legDim[0], legDim[1], legDim[2], legDim[3], "", "NDC")
     leg .SetShadowColor(0)
@@ -239,6 +242,8 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     leg .SetLineWidth(0)
     leg .SetTextSize(0.07)
     leg .SetLineColor(kWhite)
+    if legHeader:
+        leg .SetHeader(legHeader)
     for hist in range(len(histList)):
         leg .AddEntry(histList[hist], nameList[hist], "l")
     leg .Draw("SAME")
@@ -275,7 +280,7 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     ratList[1] .GetYaxis().SetLabelSize(labelSize*ratio)
 
     for x in range(1, len(histList)):
-        ratList[x].SetLineWidth(2)
+        ratList[x].SetLineWidth(3)
         ratList[x].Draw(lineStyle+"HIST SAME")
 
     midline .Draw("LSAME")
@@ -298,12 +303,15 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
     ## Loop over the input files and make the histograms
     for x in range(nFile):
 
+        if len(cut) > 1: thisCut = cut[x]
+        else: thisCut = cut
+        
         inFileName = inFileList[x]
 
         ## Modify to use glob
         inTree, inFlux, inEvt, nFiles, norm = get_chain(inFileName)
 
-        inTree.Draw(plotVar+">>this_hist("+binning+")", norm+"*fScaleFactor*InputWeight*1E38*("+cut+")")
+        inTree.Draw(plotVar+">>this_hist("+binning+")", norm+"*fScaleFactor*InputWeight*1E38*("+thisCut+")")
         thisHist = gDirectory.Get("this_hist")
         thisHist .SetDirectory(0)
 
@@ -355,11 +363,12 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, lineList, \
 
 
 ## This subdivides the prediction of a single generator as required
-def make_breakdown_comp(outPlotName, inFileList, nameList, colzList, \
+def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, lineList, \
                         plotVar, binning, cutList, \
 			labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", \
-			legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], \
-			isShape=False, withRebin=True, isLog=False, include_ratio=True, rat_title_num="Model"):
+			legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0, 1.05], \
+			isShape=False, withRebin=True, isLog=False, include_ratio=True, rat_title_num="Channel", \
+                        fluxAverage=True, lineStyle="C"):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
@@ -370,32 +379,7 @@ def make_breakdown_comp(outPlotName, inFileList, nameList, colzList, \
     ratList  = []
     nFile = len(inFileList)
 
-    ## Loop over the input files and make the histograms
-    for x in range(nFile):
-
-        inFileName = inFileList[x]
-
-	## Modify to use glob
-        inTree, inFlux, inEvt, nFiles, norm = get_chain(inFileName)
-
-        inTree.Draw(plotVar+">>this_hist("+binning+")", norm+"*fScaleFactor*InputWeight*1E38*("+cutList[x]+")")
-        thisHist = gDirectory.Get("this_hist")
-        thisHist .SetDirectory(0)
-
-        ## Deal with different numbers of files
-        thisHist.Scale(1./nFiles, "width")
-
-        ## Allow for shape option
-        if isShape: thisHist .Scale(1/thisHist.Integral(0, -1))
-
-        ## Retain for use
-        thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
-        histList .append(thisHist)
-
-    ## Sort out the plot colours
-    for x in range(len(histList)):
-        histList[x].SetLineColor(colzList[x])
-        histList[x].SetLineStyle(lineList[x])
+    histList =  get_hist_list(inFileList, plotVar, binning, cutList, labels, colzList, lineList, isShape, fluxAverage)
 
     ## Sort out the ratio hists
     nomHist = histList[0].Clone()
@@ -407,8 +391,8 @@ def make_breakdown_comp(outPlotName, inFileList, nameList, colzList, \
         ratList  .append(rat_hist)
 
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, [0, 1], rat_title_num=rat_title_num)
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, rat_title_num=rat_title_num, legHeader=legHeader, lineStyle=lineStyle)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, legHeader=legHeader, lineStyle=lineStyle)
     
 
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, lineList, \
