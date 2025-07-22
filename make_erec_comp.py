@@ -40,48 +40,67 @@ TGaxis.SetExponentOffset(-0.06, 0., "y")
 def make_T2K_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
-                "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NEUT DCC",\
+                "NuWro 19",\
+                "NuWro 25",\
+                "GiBUU"\
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
+    lineList = [1, 1, 1, 7, 1, 7, 1]
     
     ## QE reco
-    qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && Sum$(pdg==2212) > 0"
+    qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
 
     ## Loop over configs
     for det in ["T2KND", "T2KSK_osc"]:
         for flux in ["FHC_numu", "RHC_numubar"]:
+
+            ## Change to Enu_QE to use a binding energy of 27 MeV! Not 34 like the NUISANCE default...
+            binding = 27/1000.
+            m1 = 0.93956536
+            m2 = 0.93827203
+            ml = 0.10565837
+
+            ## For antineutrino the nucleons are reversed
+            if "numubar" in flux:
+                m2 = 0.93956536
+                m1 = 0.93827203
+            
+            mod_enuqe = "(2*("+str(m1)+"-"+str(binding)+")*ELep -"+str(ml)+"*"+str(ml)+" + "+str(m2)+"*"+str(m2)+" - ("+str(m1)+"-"+str(binding)+")*("+str(m1)+"-"+str(binding)+"))/" \
+                +"(2*(("+str(m1)+"-"+str(binding)+") - ELep + sqrt(ELep*ELep - "+str(ml)+"*"+str(ml)+")*CosLep))"
+
+            
             ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-            inFileList = [inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_NEUT562_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+            targ = "H2O"
+            inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUTDCC_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWROv25.3.1_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_GiBUU_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQE_gencomp.pdf", inFileList, nameList, colzList, "Enu_QE", "80,0,2", qe_cut, \
+            make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQE_gencomp.pdf", inFileList, nameList, colzList, lineList, mod_enuqe, "40,0,2", qe_cut, \
                                 "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)")
 
-            make_generator_comp(det+"_"+flux+"_H2O_EnuQEbias_gencomp.pdf", inFileList, nameList, colzList, "(Enu_QE - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
+            make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
                                 "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", isShape=True)
             
 def make_DUNE_erec_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
-                "GENIE 10b",\
-                "GENIE 10c",\
                 "CRPA",\
-                "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NEUT DCC",\
+                "NuWro 19",\
+                "NuWro 25",\
+                "GiBUU"\
                 ]
-    colzList = [9000, 9001, 9002, 9003, 9004, 9006, 9005]
+    colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
+    lineList = [1, 1, 1, 7, 1, 7, 1]
     
     ## QE reco
     ehad_cut = "cc==1"
@@ -91,24 +110,26 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
     for det in ["DUNEND", "DUNEFD_osc"]:
         for flux in ["FHC_numu", "RHC_numubar"]:
             ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-            inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10b_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10c_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
-                          inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+            targ = "Ar40"
+            inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUTDCC_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWROv25.3.1_1M_*_NUISFLAT.root",\
+                          inputDir+"/"+det+"_"+flux+"_"+targ+"_GiBUU_1M_*_NUISFLAT.root"\
                           ]
             
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurec_gencomp.pdf", inFileList, nameList, colzList, enuhad, "80,0,8", ehad_cut, \
+            make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurec_gencomp.pdf", inFileList, nameList, colzList, lineList, enuhad, "80,0,8", ehad_cut, \
                                 "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)")
 
-            make_generator_comp(det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, "("+enuhad+" - Enu_true)/Enu_true", "70,-0.5,0.2", ehad_cut, \
+            make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+enuhad+" - Enu_true)/Enu_true", "70,-0.5,0.2", ehad_cut, \
                                 "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2.2], isShape=True)
 
 if __name__ == "__main__":
 
-    inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
+    inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
+    # inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
     make_T2K_erec_plots(inputDir)
     make_DUNE_erec_plots(inputDir)
 
