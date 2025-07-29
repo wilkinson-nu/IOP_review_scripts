@@ -46,47 +46,10 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
                         "E_{#nu}^{true} (GeV); #sigma(E_{#nu}^{true}) (#times 10^{-38} cm^{2}/nucleon)", \
                         legDim=legDim, yRatLimits=[0.5, 2.2], norm="enu_ensemble")
     
-def make_test_energy_plots(inputDir="inputs/", targ="C12", flav="14", sample="ccinc"):
-
-    nameList = ["GENIE 10a",\
-	        "NEUT 580", \
-                "GiBUU"\
-		]
-    colzList = [9000, 9006, 9001]
-    lineList = [1, 7, 1]
-    cut = "cc==1"
-
-    sample_label = "CCINC"
-    if sample == "cc0pi":
-        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
-        sample_label = "CC0#pi"
-    if sample == "cc1pi":
-        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==1 && Sum$(abs(pdg)==211 || pdg==111)==1 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
-        sample_label = "CC1#pi"
-    if sample == "cc2pi":
-        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==2 && Sum$(abs(pdg)==211 || pdg==111)==2 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
-        sample_label = "CC2#pi"
-
-    det  = "MONOENSEMBLE"
-    # MONOENSEMBLE_14_O16_3.625GeV_NEUT580_100k_0003_NUISFLAT.root                                                                                                                       
-    inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
-                  ]
-
-    make_generator_comp("plots/XSEC_"+targ+"_"+flav+"_Enu_"+sample+"_gencomp.pdf", inFileList, \
-                        nameList, colzList, lineList, "Enu_true", "100,0,5", cut, \
-                        "E_{#nu}^{true} (GeV); #sigma(E_{#nu}^{true}) (#times 10^{-38} cm^{2}/nucleon)", \
-                        legDim=[0.65, 0.06, 0.93, 0.45], yRatLimits=[0.5, 1.5], norm="enu_ensemble")
-
-    
-    
 if __name__ == "__main__":
 
     inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
 
-    # make_test_energy_plots(inputDir, "C12", "14","ccinc")
-    ## make_test_energy_plots(inputDir, "O16", "14","ccinc")
     for flav in ["14", "-14"]:
         make_xsec_energy_comp_plots(inputDir, flav, "Ar40", "ccinc", legDim=[0.25, 0.5, 0.45, 0.93])
         make_xsec_energy_comp_plots(inputDir, flav, "O16", "cc0pi", legDim=[0.65, 0.06, 0.93, 0.45])
