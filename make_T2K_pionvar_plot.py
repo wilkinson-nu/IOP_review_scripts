@@ -52,7 +52,7 @@ def make_pionvar_plots(inputDir, model):
                      base_qe_cut + "&& Sum$(abs(pdg)==211 && (E - 0.1395703918)>0.075)==0",\
                      base_qe_cut + "&& Sum$(abs(pdg)==211 && (E - 0.1395703918)>0.100)==0"]
 
-    det="T2KND"
+    det="T2KSK_osc"
     flux="FHC_numu"
     flux_string = "#nu_{#mu}"
     if flux == "RHC_numubar": flux_string =	"#bar{#nu}_{#mu}"	
@@ -78,9 +78,9 @@ def make_pionvar_plots(inputDir, model):
         +"(2*(("+str(m1)+"-"+str(binding)+") - ELep + sqrt(ELep*ELep - "+str(ml)+"*"+str(ml)+")*CosLep))"
         
     make_breakdown_comp("plots/"+det+"_"+flux+"_"+targ+"_"+model+"_EnuQEbias_pionKEcomp.pdf", inFileList, "#pi^{#pm} threshold", \
-                        nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "100,-0.8,0.5", ekpi_cut_list, \
+                        nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "70,-0.9,0.5", ekpi_cut_list, \
                         "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", legDim=[0.22, 0.5, 0.42, 0.93], rat_title_num="Alt. threshold",
-                        yRatLimits=[1,1.9])
+                        yRatLimits=[1,1.9], lineStyle="][")
     
             
 if __name__ == "__main__":

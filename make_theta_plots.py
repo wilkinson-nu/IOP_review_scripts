@@ -3,7 +3,7 @@ import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
 
-from plotting_functions import get_chain, make_two_panel_plot
+from plotting_functions import make_generator_comp, get_chain, make_two_panel_plot
 
 ## Use double precision for TTree draw
 gEnv.SetValue("Hist.Precision.1D", "double")
@@ -32,114 +32,85 @@ gStyle.SetLineWidth(3)
 ## Sort out the position of the y axis exponent...
 TGaxis.SetExponentOffset(-0.06, 0., "y")
 
-
-## This is a copy of "make_generator_comp" with a very custom normalization
-def make_generator_custom_norm_comp(outPlotName, inFileList, nameList, colzList, \
-                                    plotVar="q0", binning="100,0,5", cut="cc==1", \
-                                    labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                                    legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
-    
-    ## Skip files that already exist
-    if os.path.isfile("plots/"+outPlotName):
-	print("Skipping plots/"+outPlotName, "which already exists!")
-        return
-
-    histList = []
-    ratList  = []
-
-    ## Loop over the input files and make the histograms
-    for inFileName in inFileList:
-
-        ## Modify to use glob
-        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
-
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
-        thisHist = gDirectory.Get("this_hist")
-        thisHist .SetDirectory(0)
-
-        ## Deal with different numbers of files
-        thisHist.Scale(1./nFiles, "width")
-
-	## Custom normalisation (bin 1 has a value of 1)
-        thisHist .Scale(1/thisHist.GetBinContent(1))
-
-        ## Retain for use
-	thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
-        histList .append(thisHist)
-
-    ## Sort out the plot colours
-    for x in range(len(histList)): histList[x].SetLineColor(colzList[x])
-
-    ## Sort out the ratio hists
-    nomHist = histList[0].Clone()
-    # nomHist .Rebin(2)
-    for hist in histList:
-        rat_hist = hist.Clone()
-	# rat_hist .Rebin(2)
-	rat_hist .Divide(nomHist)
-	ratList  .append(rat_hist)
-
-    ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits)
-
-
 def make_T2K_theta_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
                 "CRPA",\
-                "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NEUT DCC",\
+		"NuWro 19",\
+                "NuWro 25",\
+                "GiBUU"\
                 ]
-    colzList = [9000, 9003, 9004, 9006, 9005]
+    colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
+    lineList = [1, 1, 1, 7, 1, 7, 1]
     
     ## QE reco
-    qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && Sum$(pdg==2212) > 0"
+    # qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && Sum$(pdg==2212) > 0"
+    qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && nfsp > 0"
+    ## qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
 
+    ## Because the binning is a bit funky
+    # custom_binning = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180]
+    custom_binning = [0, 3, 6, 9, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 140, 160, 180]
+    
     ## Loop over configs
     det = "T2KND"
+    targ = "H2O"
     for flux in ["FHC_numu", "RHC_numubar"]:
         ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-        inFileList = [inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_H2O_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_H2O_NEUT562_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_H2O_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+        inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUTDCC_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWROv25.3.1_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_GiBUU_1M_*_NUISFLAT.root"\
                       ]
         
-        make_generator_custom_norm_comp(det+"_"+flux+"_H2O_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, "acos(CosLep)*180/pi", "60,0,180", qe_cut, \
-                                        "#theta_{#mu} (degrees); Scaled cross section")
+        make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut, \
+                            "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.45, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])
         
 
 def make_DUNE_theta_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
                 "CRPA",\
-                "SuSAv2",\
                 "NEUT",\
-                "NuWro"\
+                "NEUT DCC",\
+                "NuWro 19",\
+                "NuWro 25",\
+                "GiBUU"\
                 ]
-    colzList = [9000, 9003, 9004, 9006, 9005]
+    colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
+    lineList = [1, 1, 1, 7, 1, 7, 1]
     
-    ## QE reco
+    ## CCinclusive
     ccinc = "cc==1"
+
+    ## Funky binning
+    custom_binning = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 110, 120]
 
     ## Loop over configs
     det = "DUNEND"
+    targ = "Ar40"
     for flux in ["FHC_numu", "RHC_numubar"]:
         ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-        inFileList = [inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_Ar40_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_Ar40_NEUT562_1M_*_NUISFLAT.root",\
-                      inputDir+"/"+det+"_"+flux+"_Ar40_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+        inFileList = [inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NEUTDCC_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWROv25.3.1_1M_*_NUISFLAT.root",\
+                      inputDir+"/"+det+"_"+flux+"_"+targ+"_GiBUU_1M_*_NUISFLAT.root"\
                       ]
-        make_generator_custom_norm_comp(det+"_"+flux+"_Ar40_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, "acos(CosLep)*180/pi", "60,0,180", ccinc, \
-                                        "#theta_{#mu} (degrees); Scaled cross section")
+
+        make_generator_comp("plots/"+det+"_"+flux+"_Ar40_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, ccinc, \
+                            "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.45, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])
 
 if __name__ == "__main__":
 
-    inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
+    inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
     make_T2K_theta_plots(inputDir)
     make_DUNE_theta_plots(inputDir)
 

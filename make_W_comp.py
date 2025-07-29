@@ -15,8 +15,6 @@ gStyle.SetOptStat(0)
 gStyle.SetOptTitle(0)
 gStyle.SetOptFit(0)
 TGaxis.SetMaxDigits(4)
-gStyle.SetLineStyleString(11,"40 20 40 20")
-gStyle.SetLineStyleString(12,"20 10 20 10")
 
 gStyle.SetTextSize(0.05)
 gStyle.SetLabelSize(0.05,"xyzt")
@@ -33,9 +31,6 @@ gStyle.SetLineWidth(3)
 
 ## Sort out the position of the y axis exponent...
 TGaxis.SetExponentOffset(-0.06, 0., "y")
-
-## Make some colorblind friendly objects
-## From: https://personal.sron.nl/~pault/#sec:qualitative
 
 def make_W_plots(inputDir="inputs/"):
 
@@ -68,7 +63,7 @@ def make_W_plots(inputDir="inputs/"):
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_NUWROv25.3.1_1M_*_NUISFLAT.root",\
                           inputDir+"/"+det+"_"+flux+"_"+targ+"_GiBUU_1M_*_NUISFLAT.root"\
                           ]
-            
+
             make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_W_gencomp.pdf", inFileList, nameList, colzList, lineList, "W", "100,0.5,3", ehad_cut, \
                                 "W (GeV); d#sigma/dW (#times 10^{-38} cm^{2}/GeV/nucleon)", withRebin=True)
 

@@ -4,11 +4,6 @@ from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile
 from glob import glob
 
 from plotting_functions import make_generator_comp
-## def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
-##                         plotVar="q0", binning="100,0,5", cut="cc==1", \
-##                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-##                         legDim=[0.65, 0.5, 0.85, 0.93], ratLimits=[0.4, 1.6], maxVal=None, isShape=False)
-
 
 ## Use double precision for TTree draw
 gEnv.SetValue("Hist.Precision.1D", "double")
@@ -53,6 +48,11 @@ def make_T2K_erec_plots(inputDir="inputs/"):
     ## QE reco
     qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
 
+    ## Special pion < 100 MeV cut
+    base_qe_cut = "cc==1 && Sum$(abs(pdg) == 111)==0 && Sum$(abs(pdg)>111 && abs(pdg) < 211)==0 && Sum$(abs(pdg)>211 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+    pion_qe_cut = base_qe_cut + "&& Sum$(abs(pdg)==211 && (E - 0.1395703918)>0.100)==0"
+
+    
     ## Loop over configs
     for det in ["T2KND", "T2KSK_osc"]:
         for flux in ["FHC_numu", "RHC_numubar"]:
@@ -86,22 +86,35 @@ def make_T2K_erec_plots(inputDir="inputs/"):
             make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQE_gencomp.pdf", inFileList, nameList, colzList, lineList, mod_enuqe, "40,0,2", qe_cut, \
                                 "E_{#nu}^{rec, QE} (GeV); d#sigma/dE_{#nu}^{rec, QE} (#times 10^{-38} cm^{2}/nucleon)")
 
-            make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "80,-1,1", qe_cut, \
-                                "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", isShape=True)
+            make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "60,-0.9,0.5", qe_cut, \
+                                "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", norm="shape", lineStyle="][", legDim=[0.22, 0.5, 0.42, 0.93], yRatLimits=[0,2.2])
+
+            make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEabsbias_gencomp.pdf", inFileList, nameList, colzList, lineList, mod_enuqe+" - Enu_true", "60,-0.9,0.5", qe_cut, \
+				"E_{#nu}^{rec, QE} - E_{#nu}^{true} (GeV); Arb. norm.", norm="shape", lineStyle="][", legDim=[0.22, 0.5, 0.42, 0.93], yRatLimits=[0,2.2])
+
+            ## Add a pion cut
+            if det == "T2KSK_osc":
+                make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEbias_gencomp_pion100MeV.pdf", inFileList, nameList, colzList, lineList, "("+mod_enuqe+" - Enu_true)/Enu_true", "60,-0.9,0.5", pion_qe_cut, \
+                                    "(E_{#nu}^{rec, QE} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.", norm="shape", lineStyle="][", legDim=[0.22, 0.5, 0.42, 0.93], yRatLimits=[0,2.2])
+                
+                make_generator_comp("plots/"+det+"_"+flux+"_H2O_EnuQEabsbias_gencomp_pion100MeV.pdf", inFileList, nameList, colzList, lineList, mod_enuqe+" - Enu_true", "60,-0.9,0.5", pion_qe_cut, \
+                                    "E_{#nu}^{rec, QE} - E_{#nu}^{true} (GeV); Arb. norm.", norm="shape", lineStyle="][", legDim=[0.22, 0.5, 0.42, 0.93], yRatLimits=[0,2.2])
+                
             
 def make_DUNE_erec_plots(inputDir="inputs/"):
 
+
     nameList = ["GENIE 10a",\
                 "CRPA",\
-                "NEUT",\
+		"NEUT",\
                 "NEUT DCC",\
                 "NuWro 19",\
-                "NuWro 25",\
+		"NuWro 25",\
                 "GiBUU"\
                 ]
     colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
     lineList = [1, 1, 1, 7, 1, 7, 1]
-    
+
     ## QE reco
     ehad_cut = "cc==1"
     enuhad = "ELep + Sum$((abs(pdg)==11 || (abs(pdg)>17 && abs(pdg)<2000))*E) + Sum$((abs(pdg)>2300 &&abs(pdg)<10000)*E) + Sum$((abs(pdg)==2212)*(E - sqrt(E*E - px*px - py*py - pz*pz)))"
@@ -123,8 +136,12 @@ def make_DUNE_erec_plots(inputDir="inputs/"):
             make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurec_gencomp.pdf", inFileList, nameList, colzList, lineList, enuhad, "80,0,8", ehad_cut, \
                                 "E_{#nu}^{rec, had} (GeV); d#sigma/dE_{#nu}^{rec, had} (#times 10^{-38} cm^{2}/nucleon)")
 
-            make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+enuhad+" - Enu_true)/Enu_true", "70,-0.5,0.2", ehad_cut, \
-                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2.2], isShape=True)
+            make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurecbias_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+enuhad+" - Enu_true)/Enu_true", "60,-0.5,0.1", ehad_cut, \
+                                "(E_{#nu}^{rec, had} - E_{#nu}^{true})/E_{#nu}^{true}; Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2.2], norm="shape", lineStyle="][")
+
+            make_generator_comp("plots/"+det+"_"+flux+"_Ar40_Enurecabsbias_gencomp.pdf", inFileList, nameList, colzList, lineList, enuhad+" - Enu_true", "60,-0.5,0.1", ehad_cut, \
+                                "E_{#nu}^{rec, had} - E_{#nu}^{true} (GeV); Arb. norm.",  [0.25, 0.5, 0.45, 0.93], yRatLimits=[0,2.2], norm="shape", lineStyle="][")
+
 
 if __name__ == "__main__":
 

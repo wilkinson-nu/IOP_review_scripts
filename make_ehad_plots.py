@@ -168,8 +168,8 @@ def make_ehad_plots(inputDir="inputs/"):
         #make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_ehad_gencomp.pdf", inFileList, nameList, colzList, ehad, "100,0,2", ccinc, \
         #                    "E_{had} (GeV); d#sigma/dE_{had} (#times 10^{-38} cm^{2}/GeV/nucleon)")
                 
-        make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+ehad+")/q0", "60,0,1.1", ccinc, \
-                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], [0, None], [0,2.2])
+        make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+ehad+")/q0", "60,0,1.2", ccinc, \
+                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], [0, None], [0,2.6])
 
         #make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_eavoverq0_gencomp.pdf", inFileList, nameList, colzList, "(Eav)/q0", "220,0,1.1", ccinc, \
         #                    "E_{avail}/q_{0}; d#sigma/d(E_{avail}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0, None], [0,2.2])
@@ -194,7 +194,7 @@ def make_ehad_plots(inputDir="inputs/"):
         #                    "E_{had} (GeV); d#sigma/dE_{had} (#times 10^{-38} cm^{2}/GeV/nucleon)")
 
         make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+ehad+")/q0", "60,0,1.2", cc0pi, \
-                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], [0, None], [0,2.2])
+                            "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], [0, None], [0,2.6])
 
         #make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_eavoverq0_gencomp.pdf", inFileList, nameList, colzList, "(Eav)/q0", "120,0,1.2", cc0pi, \
         #                    "E_{avail}/q_{0}; d#sigma/d(E_{avail}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.25, 0.5, 0.45, 0.93], [0, None], [0,2.2])
@@ -296,8 +296,8 @@ def make_q0_vs_ehad(inputDir):
 if __name__ == "__main__":
     inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
     # inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    make_q0_plots(inputDir)
+    # make_q0_plots(inputDir)
     make_ehad_plots(inputDir)
-    make_q0_vs_ehad(inputDir)
+    # make_q0_vs_ehad(inputDir)
     # make_ehad_breakdown_plots(inputDir)
     

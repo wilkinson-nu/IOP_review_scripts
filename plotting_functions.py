@@ -96,14 +96,14 @@ def get_chain(inputFileNamesWithNorm, max_files=999):
             if "EVT" not in key.GetName(): continue
                 
             tempEvt = inFile.Get(key.GetName())
-            if not inEvt:
-                inEvt = tempEvt
-                inEvt .SetDirectory(0)
-            else: inEvt.Add(tempEvt)
+            ## if not inEvt:
+            ##     inEvt = tempEvt
+            ##     inEvt .SetDirectory(0)
+            ## else: inEvt.Add(tempEvt)
         inFile.Close()    
 
     ## Scale the event rate histogram
-    inEvt .Scale(1./nFiles)
+    ## inEvt .Scale(1./nFiles)
     print("Found", inTree.GetEntries(), "events in chain")
 
     return inTree, inFlux, inEvt, nFiles, norm
@@ -255,6 +255,10 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     if isLog: gPad.SetLogy(1)
     gPad.SetRightMargin(0.03)
     gPad.SetTopMargin(0.01)
+
+    ### TESTING
+    # gPad.SetTopMargin(0.1)
+
     gPad.SetLeftMargin(0.15)
     gPad.SetBottomMargin(0.028)
     gPad.RedrawAxis()
@@ -294,8 +298,32 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     can   .Update()
     can .SaveAs(outPlotName)
 
+
+## This is slightly mad, all because of the silly way I used an ensemble of monoenergetic flux files to make flat distributions as a function of true Enu
+## It just takes the first entry in each file, and fills the histogram, then returns that
+## GiBUU made it harder than it needed to be...
+def mad_enu_norm_hist(inputFileNames, hist):
+
+    inFile   = ROOT.TFile(glob(inputFileNames)[0], "READ")
+    treeName = None
+    for key in inFile.GetListOfKeys():
+        if "VARS" not in key.GetName(): continue
+        treeName = key.GetName()
+    inFile .Close()
+
+    ## Loop over files and add a single entry
+    for inputFileName in glob(inputFileNames):
+        inputFile = ROOT.TFile(inputFileName, "READ")
+        inTree = inputFile.Get(treeName)
+        inTree .GetEntry(0)
+        hist .Fill(inTree .Enu_true)
+        inputFile .Close()
+
+    return hist
+    
+
 ## Return a list of histograms
-def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList, isShape=False, fluxAverage=True):
+def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList, normType=None):
     
     histList = []
     nFile = len(inFileList)
@@ -303,7 +331,7 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
     ## Loop over the input files and make the histograms
     for x in range(nFile):
 
-        if len(cut) > 1: thisCut = cut[x]
+        if isinstance(cut, list): thisCut = cut[x]
         else: thisCut = cut
         
         inFileName = inFileList[x]
@@ -311,17 +339,38 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
         ## Modify to use glob
         inTree, inFlux, inEvt, nFiles, norm = get_chain(inFileName)
 
-        inTree.Draw(plotVar+">>this_hist("+binning+")", norm+"*fScaleFactor*InputWeight*1E38*("+thisCut+")")
-        thisHist = gDirectory.Get("this_hist")
-        thisHist .SetDirectory(0)
-
+        ## Optional funky binning
+        if isinstance(binning, str):
+            inTree.Draw(plotVar+">>this_hist("+binning+")", norm+"*fScaleFactor*InputWeight*1E38*("+thisCut+")")
+            thisHist = gDirectory.Get("this_hist")
+            thisHist .SetDirectory(0)
+        else:
+            edges = array("d", binning)
+            nbins = len(edges) - 1
+            thisHist = TH1D("this_hist", "", nbins, edges)
+            inTree.Draw(plotVar+">>this_hist", norm+"*fScaleFactor*InputWeight*1E38*("+thisCut+")")
+            thisHist = gDirectory.Get("this_hist")
+            thisHist .SetDirectory(0)
+            
         ## Deal with different numbers of files
-        if fluxAverage: thisHist.Scale(1./nFiles, "width")
-        else: thisHist.Scale(inFlux.Integral("width")/nFiles, "width")
-        
-        ## Allow for shape option
-        if isShape: thisHist .Scale(1/thisHist.Integral(0, -1))
+        if normType == "enu_ensemble":
 
+            ## Normalize based on the input files
+            print("Applying funky normalization... if you aren't using an ensemble of monoenergetic files... you messed up")
+            thisNormHist = thisHist .Clone()
+            thisNormHist .Reset()
+            thisNormHist = mad_enu_norm_hist(inFileName, thisNormHist)
+            thisHist .Divide(thisNormHist)
+
+        elif normType == "nofluxaverage":
+            thisHist.Scale(inFlux.Integral("width")/nFiles, "width")
+        elif normType=="shape":
+            thisHist .Scale(1/thisHist.Integral(0, -1))
+        elif normType=="theta":
+            thisHist .Scale(1/thisHist.GetBinContent(1), "width")            
+        else:
+            thisHist.Scale(1./nFiles, "width")
+        
 	## Retain for use
         thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
         histList .append(thisHist)
@@ -337,15 +386,15 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, lineList, \
                         plotVar="q0", binning="100,0,5", cut="cc==1", \
                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", \
                         legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], \
-                        isShape=False, withRebin=False, isLog=False, include_ratio=True, rat_title_num="Model", \
-                        fluxAverage=True, lineStyle="C"):
+                        norm=None, withRebin=False, isLog=False, include_ratio=True, rat_title_num="Model", \
+                        lineStyle="C"):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
         print("Skipping "+outPlotName, "which already exists!")
         return
-    
-    histList =  get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList, isShape, fluxAverage)
+
+    histList =  get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList, norm)
     ratList  = []
 
     ## Sort out the ratio hists
@@ -367,8 +416,8 @@ def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, 
                         plotVar, binning, cutList, \
 			labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", \
 			legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0, 1.05], \
-			isShape=False, withRebin=True, isLog=False, include_ratio=True, rat_title_num="Channel", \
-                        fluxAverage=True, lineStyle="C"):
+			norm=None, withRebin=True, isLog=False, include_ratio=True, rat_title_num="Channel", \
+                        lineStyle="C"):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
@@ -379,7 +428,7 @@ def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, 
     ratList  = []
     nFile = len(inFileList)
 
-    histList =  get_hist_list(inFileList, plotVar, binning, cutList, labels, colzList, lineList, isShape, fluxAverage)
+    histList =  get_hist_list(inFileList, plotVar, binning, cutList, labels, colzList, lineList, norm)
 
     ## Sort out the ratio hists
     nomHist = histList[0].Clone()
@@ -407,8 +456,8 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     
     histList    = []
     ratList     = []
-    histNumList = get_hist_list(inFileNumList, plotVar, binning, cut, labels, colzList, lineList)
-    histDenList = get_hist_list(inFileDenList, plotVar, binning, cut, labels, colzList, lineList)
+    histNumList = get_hist_list(inFileNumList, plotVar, binning, cut, labels, colzList, lineList, isEnu=True)
+    histDenList = get_hist_list(inFileDenList, plotVar, binning, cut, labels, colzList, lineList, isEnu=True)
     
     ## Make the first ratio
     for x in range(len(histNumList)):

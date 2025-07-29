@@ -2,102 +2,22 @@ import ROOT
 import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+from plotting_functions import make_generator_comp
 
-from plotting_functions import get_chain, make_two_panel_plot
-## def make_generator_comp(outPlotName, inFileList, nameList, colzList, \
-##                         plotVar="q0", binning="100,0,5", cut="cc==1", \
-## 			labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-##                         legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], isShape=False):
-
-## In this case, ignore hydrogen...
-def get_targ_label(targ):
-    if targ == "Ar40": return "^{40}Ar"
-    if targ == "C8H8": return "^{12}C"
-    if targ == "H2O": return "^{16}O"
-    print("Unknown target", targ)
-    return targ
-
-## This is to remove hydrogen from the /nucleon cross sections NUISANCE produces...
-def get_targ_norm(inString):
-    if "C8H8" in inString: return 13/12.
-    if "H2O" in inString: return  18/16.
-    return 1.
-
-## This is a copy of "make_generator_comp" with a very custom normalization
-def make_generator_custom_norm_comp(outPlotName, inFileList, nameList, colzList, \
-                                    cut="cc==1", \
-                                    legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
-    
-    ## This now only works for XSEC as a function of Enu
-    plotVar = "Enu_true"
-    labels="E_{#nu}^{true} (GeV); #sigma(E_{#nu}^{true}) (#times 10^{-38} cm^{2}/nucleon)"
-
-    ## This is hard-coded in the binning file
-    binning="100,0,5"
-
-    ## Skip files that already exist
-    if os.path.isfile("plots/"+outPlotName):
-	print("Skipping plots/"+outPlotName, "which already exists!")
-        return
-
-    histList = []
-    ratList  = []
-
-    ## Loop over the input files and make the histograms
-    for inFileName in inFileList:
-
-        ## Modify to use glob
-        inTree, inFlux, inEvt, nFiles = get_chain(inFileName)
-
-        ## Correct for hydrogen in some of the samples
-	targNorm = get_targ_norm(inFileName)
-
-        inTree.Draw(plotVar+">>this_hist("+binning+")", "InputWeight*("+cut+")*fScaleFactor*1E38")
-	thisHist = gDirectory.Get("this_hist")
-        thisHist .SetDirectory(0)
-
-        ## Deal with different numbers of files
-        ## Some funky normalization to get around some hardcoded NUISANCE stuff that assumes flux-averaged cross sections
-        thisHist.Scale(targNorm*inFlux.Integral("width")/float(nFiles), "width")
-
-	for x in range(5, thisHist.GetNbinsX()+1):
-            this_val  = thisHist.GetBinContent(x)
-            this_flux = inFlux.GetBinContent(x-4)
-            thisHist .SetBinContent(x, this_val/this_flux)
-
-        thisHist .Rebin(2)
-        thisHist .Scale(0.5)
-            
-        ## Retain for use
-	thisHist .SetNameTitle("thisHist", "thisHist;"+labels)
-        histList .append(thisHist)
-
-    ## Sort out the plot colours
-    for x in range(len(histList)): histList[x].SetLineColor(colzList[x])
-
-    ## Sort out the ratio hists
-    nomHist = histList[0].Clone()
-    for hist in histList:
-        rat_hist = hist.Clone()
-	rat_hist .Divide(nomHist)
-	ratList  .append(rat_hist)
-
-    ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits)
-
-
-            
-def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", isOverEnu=False, minMax=None):
+def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sample="ccinc", legDim=[0.65, 0.06, 0.93, 0.45]):
 
     nameList = ["GENIE 10a",\
-                "CRPA",\
-                "SuSAv2",\
-                "NEUT",\
-                "NuWro"\
-                ]
-    colzList = [9000, 9003, 9004, 9006, 9005]
+		"CRPA",\
+		"NEUT",\
+		"NEUT DCC",\
+		"NuWro 19",\
+		"NuWro 25",\
+		"GiBUU"\
+		]
+    colzList = [8000, 8003, 8004, 8005, 8006, 8007, 8001]
+    lineList = [1, 1, 1, 7, 1, 7, 1]
     
-    cut = "cc==1 && tgta != 1 && tgt != 1000010010 && Enu_true > 0.2"
+    cut = "cc==1" ## && tgta != 1 && tgt != 1000010010" ## && Enu_true > 0.2"
     sample_label = "CCINC"
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
@@ -109,37 +29,68 @@ def make_xsec_energy_comp_plots(inputDir="inputs/", flav="numu", targ="Ar40", sa
         cut += "&& abs(Mode)==2"
         sample_label = "2p2h"
 
-    ## Loop over configs
-    det="falling_5GeV"
+    binning = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.2, 4.4, 4.6, 4.8, 5.0]
+        
+    ## Use the ensemble files
+    inFileList = [inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
+                  inputDir+"/MONOENSEMBLE_"+flav+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
+                  ]
     
-    ## These files can be found here (no login required): https://portal.nersc.gov/project/dune/data/2x2/simulation
-    inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
-                  inputDir+"/"+det+"_"+flav+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+    make_generator_comp("plots/XSEC_"+targ+"_"+flav+"_Enu_"+sample+"_gencomp.pdf", inFileList, \
+                        nameList, colzList, lineList, "Enu_true", binning, cut, \
+                        "E_{#nu}^{true} (GeV); #sigma(E_{#nu}^{true}) (#times 10^{-38} cm^{2}/nucleon)", \
+                        legDim=legDim, yRatLimits=[0.5, 2.2], norm="enu_ensemble")
+    
+def make_test_energy_plots(inputDir="inputs/", targ="C12", flav="14", sample="ccinc"):
+
+    nameList = ["GENIE 10a",\
+	        "NEUT 580", \
+                "GiBUU"\
+		]
+    colzList = [9000, 9006, 9001]
+    lineList = [1, 7, 1]
+    cut = "cc==1"
+
+    sample_label = "CCINC"
+    if sample == "cc0pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC0#pi"
+    if sample == "cc1pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==1 && Sum$(abs(pdg)==211 || pdg==111)==1 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC1#pi"
+    if sample == "cc2pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==2 && Sum$(abs(pdg)==211 || pdg==111)==2 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC2#pi"
+
+    det  = "MONOENSEMBLE"
+    # MONOENSEMBLE_14_O16_3.625GeV_NEUT580_100k_0003_NUISFLAT.root                                                                                                                       
+    inFileList = [inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                  inputDir+"/"+det+"_"+flav+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                   ]
 
-    outFileName = det+"_"+flav+"_"+targ+"_Enu_"+sample+"_gencomp.pdf"
-    make_generator_custom_norm_comp(outFileName, inFileList, nameList, colzList, cut, [0.65, 0.06, 0.93, 0.45])
+    make_generator_comp("plots/XSEC_"+targ+"_"+flav+"_Enu_"+sample+"_gencomp.pdf", inFileList, \
+                        nameList, colzList, lineList, "Enu_true", "100,0,5", cut, \
+                        "E_{#nu}^{true} (GeV); #sigma(E_{#nu}^{true}) (#times 10^{-38} cm^{2}/nucleon)", \
+                        legDim=[0.65, 0.06, 0.93, 0.45], yRatLimits=[0.5, 1.5], norm="enu_ensemble")
 
+    
     
 if __name__ == "__main__":
 
-    inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
+    inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
 
-    # for targ in ["Ar40"]: #, "C8H8", "H2O"]:
-    for flav in ["numu"]: #, "nue", "nuebar"]:
-        #make_xsec_energy_comp_plots(inputDir, flav, "Ar40", "ccinc")
-        #make_xsec_energy_comp_plots(inputDir, flav, "H2O", "cc0pi")
-        #make_xsec_energy_comp_plots(inputDir, flav, "C8H8", "cc0pi")
-        make_xsec_energy_comp_plots(inputDir, flav, "Ar40", "2p2h")
-	make_xsec_energy_comp_plots(inputDir, flav, "H2O", "2p2h")
-	make_xsec_energy_comp_plots(inputDir, flav, "C8H8", "2p2h")
-
+    # make_test_energy_plots(inputDir, "C12", "14","ccinc")
+    ## make_test_energy_plots(inputDir, "O16", "14","ccinc")
+    for flav in ["14", "-14"]:
+        make_xsec_energy_comp_plots(inputDir, flav, "Ar40", "ccinc", legDim=[0.25, 0.5, 0.45, 0.93])
+        make_xsec_energy_comp_plots(inputDir, flav, "O16", "cc0pi", legDim=[0.65, 0.06, 0.93, 0.45])
+        make_xsec_energy_comp_plots(inputDir, flav, "C12", "cc0pi", legDim=[0.65, 0.06, 0.93, 0.45])
         
-        
-            #make_xsec_energy_comp_plots(inputDir, flav, targ, "ccinc", True)
-            #make_xsec_energy_comp_plots(inputDir, flav, targ, "cc0pi")
             
 
