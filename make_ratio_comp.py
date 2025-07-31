@@ -55,15 +55,23 @@ def get_targ_label(targ):
     if targ == "Ar40": return "^{40}Ar"
     if targ == "C8H8": return "^{12}C"
     if targ == "H2O": return "^{16}O"
+    if targ == "C12": return "^{12}C"
+    if targ == "O16": return "^{16}O"
     print("Unknown target", targ)
     return targ
-    
-def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", minMax=[0.6, 1.4]):
+
+def get_targ_norm(inString):
+    if "C8H8" in inString: return 13/12.
+    if "H2O" in inString: return  18/16.
+    return 1.
+
+
+def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", yLimits=[0.65, 1.25]):
 
     nameList = ["GENIE 10a",\
                 "CRPA",\
                 "SuSAv2",\
-                "NEUT",\
+                "NEUT 580",\
                 "NuWro"\
                 ]
     colzList = [9000, 9003, 9004, 9006, 9005]
@@ -83,21 +91,21 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
     inFileNumList = [inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav1+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav1+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]
 
     inFileDenList = [inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_NEUT562_1M_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav2+"_"+targ+"_NEUT580_1M_*_NUISFLAT.root",\
                      inputDir+"/"+det+"_"+flav2+"_"+targ+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
                      ]    
 
-    make_generator_ratio_comp(det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
+    make_generator_ratio_comp("plots/"+det+"_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp_NEWNEUT.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, "Enu_true", "40,0,5", cut, \
                               "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
-                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=minMax, yRatLimits=[0.8, 1.2])
+                              legDim=[0.65, 0.06, 0.93, 0.45], yLimits=yLimits, yRatLimits=[0.75, 1.25], withRebin=True)
 
     
 def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc"):
@@ -105,7 +113,7 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     nameList = ["GENIE 10a",\
                 "CRPA",\
                 "SuSAv2",\
-                "NEUT",\
+                "NEUT 580",\
                 "NuWro"\
                 ]
     colzList = [9000, 9003, 9004, 9006, 9005]
@@ -117,41 +125,97 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
-
+    if sample == "cc1pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==1 && Sum$(abs(pdg)==211 || pdg==111)==1 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC1#pi"
+    if sample == "cc2pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==2 && Sum$(abs(pdg)==211 || pdg==111)==2 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC2#pi"
+        
     det  = "falling_5GeV"
 
-    inFileNumList = [inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_NEUT562_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+    norm1 = get_targ_norm(targ1)
+    norm2 = get_targ_norm(targ2)
+    
+    inFileNumList = [inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root;"+str(norm1),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root;"+str(norm1),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root;"+str(norm1),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_NEUT580_1M_*_NUISFLAT.root;"+str(norm1),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root;"+str(norm1)\
                      ]
 
-    inFileDenList = [inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_NEUT562_1M_*_NUISFLAT.root",\
-                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root"\
+    inFileDenList = [inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G18_10a_00_000_1M_*_NUISFLAT.root;"+str(norm2),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_CRPA21_04a_00_000_1M_*_NUISFLAT.root;"+str(norm2),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_GENIEv3_G21_11a_00_000_1M_*_NUISFLAT.root;"+str(norm2),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_NEUT580_1M_*_NUISFLAT.root;"+str(norm2),\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_NUWRO_LFGRPA_1M_*_NUISFLAT.root;"+str(norm2)\
                      ]    
     
-    make_generator_ratio_comp(det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
+    make_generator_ratio_comp("plots/"+det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp_NEWNEUT.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, "Enu_true", "20,0,5", cut, \
                               "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
                               legDim=[0.65, 0.06, 0.93, 0.45], yLimits=[0.65, 1.25], yRatLimits=[0.75, 1.25])
 
+    
+def make_test_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc"):
+
+    nameList = ["GENIE 10a",\
+                "NEUT 580", \
+                ]
+    colzList = [9000, 9006]
+    lineList = [1, 1]
+    cut = "cc==1"
+
+    sample_label = "CCINC"
+    if sample == "cc0pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC0#pi"
+    if sample == "cc1pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==1 && Sum$(abs(pdg)==211 || pdg==111)==1 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC1#pi"
+    if sample == "cc2pi":
+        cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==2 && Sum$(abs(pdg)==211 || pdg==111)==2 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
+        sample_label = "CC2#pi"
+
+    det  = "MONOENSEMBLE"
+    # MONOENSEMBLE_14_O16_3.625GeV_NEUT580_100k_0003_NUISFLAT.root
+    inFileNumList = [inputDir+"/"+det+"_"+flav+"_"+targ1+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ1+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                     ]
+
+    inFileDenList = [inputDir+"/"+det+"_"+flav+"_"+targ2+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                     inputDir+"/"+det+"_"+flav+"_"+targ2+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                     ]
+
+    #def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, lineList, \
+    #                              plotVar="q0", binning="100,0,5", cut="cc==1", \
+    #                              labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
+    #                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], include_ratio=True, withRebin=False):
+
+    
+    make_generator_ratio_comp("plots/"+det+"_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp_TESTMONO.pdf", inFileNumList, inFileDenList, \
+                              nameList, colzList, lineList, "Enu_true", "100,0,5", cut, \
+                              "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
+                              legDim=[0.65, 0.06, 0.93, 0.45], yLimits=[0.65, 1.25], yRatLimits=[0.75, 1.25])
+
+
 if __name__ == "__main__":
 
-    inputDir="/global/cfs/cdirs/dune/users/cwilk/MC_IOP_review/*/"
-    # for targ in ["Ar40", "H2O"]:
-    #     for sample in ["ccinc"]:
-    #         make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.9])
-    #         make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.9])
-            # make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0, 0.8])
-            # make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0, 0.8])
+    inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
 
-    for flav in ["numu", "numubar"]: #, "nue", "nuebar"]:
-        for sample in ["ccinc", "cc0pi"]:
-            make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flav, sample)
-            make_targ_ratio_plots(inputDir, "H2O", "C8H8", flav, sample)
+    for sample in ["ccinc", "cc0pi"]:
+        make_test_ratio_plots(inputDir, "O16", "C12", "14", sample)
+
+    ## for targ in ["Ar40", "H2O", "C8H8"]:
+    ##     for sample in ["ccinc", "cc0pi"]:
+    ##         make_flav_ratio_plots(inputDir, "nue", "numu", targ, sample, [0.9, 1.5])
+    ##         make_flav_ratio_plots(inputDir, "nuebar", "numubar", targ, sample, [0.9, 1.5])
+    ##         make_flav_ratio_plots(inputDir, "nuebar", "nue", targ, sample, [0.2, 0.5])
+    ##         make_flav_ratio_plots(inputDir, "numubar", "numu", targ, sample, [0.2, 0.5])
+    ## 
+    ## for flav in ["numu", "numubar"]: #, "nue", "nuebar"]:
+    ##     for sample in ["ccinc", "cc0pi"]: #, "cc1pi", "cc2pi"]:
+    ##         make_targ_ratio_plots(inputDir, "Ar40", "C8H8", flav, sample)
+    ##         make_targ_ratio_plots(inputDir, "H2O", "C8H8", flav, sample)
 
 
