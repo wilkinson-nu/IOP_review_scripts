@@ -50,6 +50,9 @@ def make_T2K_theta_plots(inputDir="inputs/"):
     qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && nfsp > 0"
     ## qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
 
+    qe_cut_o16 = qe_cut + "&& tgta != 1 && tgt != 1000010010"
+    qe_cut_h1  = qe_cut + "&& !(tgta != 1 && tgt != 1000010010)"
+    
     ## Because the binning is a bit funky
     # custom_binning = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180]
     custom_binning = [0, 3, 6, 9, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 70, 80, 90, 100, 110, 120, 130, 140, 160, 180]
@@ -71,7 +74,31 @@ def make_T2K_theta_plots(inputDir="inputs/"):
         make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut, \
                             "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.45, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])
         
+        make_generator_comp("plots/"+det+"_"+flux+"_O16_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut_o16, \
+                            "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.45, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])
 
+        make_generator_comp("plots/"+det+"_"+flux+"_"+targ+"_theta_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut, \
+                            "#theta_{#mu} (degrees); d#sigma/d#theta_{#mu} (#times 10^{-38} cm^{2}/nucleon)", [0.65, 0.45, 0.85, 0.93], norm=None, lineStyle="C", yRatLimits=[0, 2.1])
+
+        make_generator_comp("plots/"+det+"_"+flux+"_O16_theta_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut_o16, \
+                            "#theta_{#mu} (degrees); d#sigma/d#theta_{#mu} (#times 10^{-38} cm^{2}/nucleon)", [0.65, 0.45, 0.85, 0.93], norm=None, lineStyle="C", yRatLimits=[0, 2.1])
+
+        
+        if flux == "RHC_numubar":
+            make_generator_comp("plots/"+det+"_"+flux+"_H1_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut_h1, \
+                                "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.45, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])
+
+            make_generator_comp("plots/"+det+"_"+flux+"_H1_theta_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, qe_cut_h1, \
+                                "#theta_{#mu} (degrees); d#sigma/d#theta_{#mu} (#times 10^{-38} cm^{2}/nucleon)", [0.65, 0.45, 0.85, 0.93], norm=None, lineStyle="C", \
+                                yRatLimits=[0, 2.1])
+
+            make_generator_comp("plots/"+det+"_"+flux+"_H1_theta_CCINC_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, \
+                                "cc==1 && nfsp > 0 && !(tgta != 1 && tgt != 1000010010)", \
+                                "#theta_{#mu} (degrees); d#sigma/d#theta_{#mu} (#times 10^{-38} cm^{2}/nucleon)", [0.65, 0.45, 0.85, 0.93], norm=None, lineStyle="C", \
+                                yRatLimits=[0, 2.1])
+
+
+            
 def make_DUNE_theta_plots(inputDir="inputs/"):
 
     nameList = ["GENIE 10a",\
@@ -112,5 +139,5 @@ if __name__ == "__main__":
 
     inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
     make_T2K_theta_plots(inputDir)
-    make_DUNE_theta_plots(inputDir)
+    # make_DUNE_theta_plots(inputDir)
 
