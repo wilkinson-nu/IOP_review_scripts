@@ -446,8 +446,9 @@ def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, 
 
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, lineList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
-                              labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], include_ratio=True, withRebin=False):
+                              labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", norm="enu_ensemble", \
+                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C", \
+                              include_ratio=True, withRebin=False):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
@@ -456,8 +457,8 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
     
     histList    = []
     ratList     = []
-    histNumList = get_hist_list(inFileNumList, plotVar, binning, cut, labels, colzList, lineList, isEnu=True)
-    histDenList = get_hist_list(inFileDenList, plotVar, binning, cut, labels, colzList, lineList, isEnu=True)
+    histNumList = get_hist_list(inFileNumList, plotVar, binning, cut, labels, colzList, lineList, norm)
+    histDenList = get_hist_list(inFileDenList, plotVar, binning, cut, labels, colzList, lineList, norm)
     
     ## Make the first ratio
     for x in range(len(histNumList)):
@@ -475,8 +476,8 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ratList  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=True)
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=True)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=True, lineStyle=lineStyle)
 
     
 def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, nameList, colzList, lineList, \
@@ -491,9 +492,9 @@ def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, name
 
     histList  = []
     ratList   = []
-    histListA = get_hist_list(inFileListA, plotVar, binning, cut, labels, colzList, lineList, False, False)
-    histListB = get_hist_list(inFileListB, plotVar, binning, cut, labels, colzList, lineList, False, False)
-    histListC = get_hist_list(inFileListC, plotVar, binning, cut, labels, colzList, lineList, False, False)
+    histListA = get_hist_list(inFileListA, plotVar, binning, cut, labels, colzList, lineList, normType="nofluxaverage")
+    histListB = get_hist_list(inFileListB, plotVar, binning, cut, labels, colzList, lineList, normType="nofluxaverage")
+    histListC = get_hist_list(inFileListC, plotVar, binning, cut, labels, colzList, lineList, normType="nofluxaverage")
     
     ## Make the first ratio
     for x in range(len(histListA)):
@@ -520,20 +521,19 @@ def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, name
     
 ## The double ratio is (A/B)/(C/D)
 def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD, \
-                                     nameList, colzList, plotVar, binning, cut="cc==1", \
-                                     labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                                     legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6]):
+                                     nameList, colzList, lineList, plotVar, binning, cut="cc==1", \
+                                     labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", norm="enu_ensemble", \
+                                     legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C"):
     
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
         print("Skipping "+outPlotName, "which already exists!")
         return
 
-    isLog = False
-    histListA = get_hist_list(inFileListA, plotVar, binning, cut, labels, colzList, lineList)
-    histListB = get_hist_list(inFileListB, plotVar, binning, cut, labels, colzList, lineList)
-    histListC = get_hist_list(inFileListC, plotVar, binning, cut, labels, colzList, lineList)
-    histListD = get_hist_list(inFileListD, plotVar, binning, cut, labels, colzList, lineList)
+    histListA = get_hist_list(inFileListA, plotVar, binning, cut, labels, colzList, lineList, norm)
+    histListB = get_hist_list(inFileListB, plotVar, binning, cut, labels, colzList, lineList, norm)
+    histListC = get_hist_list(inFileListC, plotVar, binning, cut, labels, colzList, lineList, norm)
+    histListD = get_hist_list(inFileListD, plotVar, binning, cut, labels, colzList, lineList, norm)
 
     ## The combinations
     histListAB   = []
@@ -542,11 +542,6 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
     ratListABCD  = []
 
     nHists     = len(inFileListA)
-    
-    ## Binning info
-    fine_binning="200,0,2"
-    bin_arr = array('d', binning)
-    nbins = len(binning)-1
     
     ## Make the first ratio
     for x in range(nHists):
@@ -575,4 +570,4 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         ratListABCD  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits, topMidLine=True)
+    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
