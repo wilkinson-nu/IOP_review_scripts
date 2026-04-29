@@ -6,25 +6,25 @@ import sys
 from glob import glob
 
 SCALAR_BRANCHES = {
-    "Mode":         ("mode",    np.int32,   None),
-    "PDGnu":        ("pdg_nu",  np.int32,   None),
-    "tgt":          ("pdg_tgt", np.int32,   None),
-    "Enu_true":     ("Enu",     np.float32, None),
-    "W":            ("W",       np.float32, None),
-    "Q2":           ("Q2",      np.float32, None),
-    "q0":           ("q0",      np.float32, None),
-    "q3":           ("q3",      np.float32, None),
-    "cc":           ("cc",      np.bool_,   None),
-    "fScaleFactor": ("wgt",     np.float32, lambda x: x * 1e38),
-    "nfsp":         ("nfsp",    np.int32,   None),
+    "Mode":         ("mode",    np.int32  ),
+    "PDGnu":        ("pdg_nu",  np.int32  ),
+    "tgt":          ("pdg_tgt", np.int32  ),
+    "Enu_true":     ("Enu",     np.float32),
+    "W":            ("W",       np.float32),
+    "Q2":           ("Q2",      np.float32),
+    "q0":           ("q0",      np.float32),
+    "q3":           ("q3",      np.float32),
+    "cc":           ("cc",      np.bool_  ),
+    "fScaleFactor": ("wgt",     np.float32),
+    "nfsp":         ("nfsp",    np.int32  ),
 }
 
 VLEN_BRANCHES = {
-    "px":  ("px",  np.float32, None),
-    "py":  ("py",  np.float32, None),
-    "pz":  ("pz",  np.float32, None),
-    "E":   ("E",   np.float32, None),
-    "pdg": ("pdg", np.int32,   None),
+    "px":  ("px",  np.float32),
+    "py":  ("py",  np.float32),
+    "pz":  ("pz",  np.float32),
+    "E":   ("E",   np.float32),
+    "pdg": ("pdg", np.int32  ),
 }
 
 
@@ -56,11 +56,16 @@ def convert_flattrees_to_hdf5(root_files,
             nfsp        = scalar_data["nfsp"]
             n_particles = int(nfsp.sum())
 
+            ## Unpick the per file normalization in the NUISANCE default
+            scalar_data["fScaleFactor"] = (
+                scalar_data["fScaleFactor"] * 1e38 * n_events
+            )
+
             for root_name in SCALAR_BRANCHES:
                 all_scalar_data[root_name].append(scalar_data[root_name])
             for root_name in VLEN_BRANCHES:
                 all_vlen_data[root_name].append(vlen_data[root_name])
-
+            
             file_metadata.append({
                 "source_file":    path,
                 "n_events":       n_events,
@@ -99,10 +104,8 @@ def convert_flattrees_to_hdf5(root_files,
 
         # Scalar events
         ev_grp = hf.create_group("events")
-        for root_name, (hdf5_name, dtype, transform) in SCALAR_BRANCHES.items():
+        for root_name, (hdf5_name, dtype) in SCALAR_BRANCHES.items():
             data = scalar_data[root_name]
-            if transform is not None:
-                data = transform(data)
             ev_grp.create_dataset(
                 hdf5_name,
                 data=data.astype(dtype),
@@ -117,10 +120,8 @@ def convert_flattrees_to_hdf5(root_files,
         offsets = np.concatenate([[0], np.cumsum(nfsp)]).astype(np.int64)
         pt_grp.create_dataset("offsets", data=offsets, compression="gzip")
 
-        for root_name, (hdf5_name, dtype, transform) in VLEN_BRANCHES.items():
+        for root_name, (hdf5_name, dtype) in VLEN_BRANCHES.items():
             data = ak.to_numpy(ak.flatten(vlen_data[root_name]))
-            if transform is not None:
-                data = transform(data)
             pt_grp.create_dataset(
                 hdf5_name,
                 data=data.astype(dtype),
@@ -133,7 +134,4 @@ def convert_flattrees_to_hdf5(root_files,
 
 if __name__ == "__main__":
     convert_flattrees_to_hdf5(sys.argv[1:-1], sys.argv[-1])    
-    
 
-#if __name__ == "__main__":
-#    convert_flattree_to_hdf5(sys.argv[1], sys.argv[2])
