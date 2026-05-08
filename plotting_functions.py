@@ -54,7 +54,8 @@ kkMuted7  = TColor(8007, 136/255.,  34/255.,  85/255.)
 kkMuted8  = TColor(8008, 170/255.,  68/255., 153/255.)
 kkMuted9  = TColor(8009, 221/255., 221/255., 221/255.)
 
-def get_chain(inputFileNamesWithNorm, max_files=999):
+
+def get_chain(inputFileNamesWithNorm, max_files=99999):
 
     ## Do something funky to get a normalisation in here...
     inputFileNamesWithNormSplit = inputFileNamesWithNorm.split(";")
@@ -114,8 +115,8 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     can_small = TCanvas("can_small", "can_small", 600, 600)
     can_small.cd()
 
-    titleSize = 0.07
-    labelSize = 0.06
+    titleSize = 0.06
+    labelSize = 0.055
     
     ## Sort out the yLimits
     minVal = yLimits[0]
@@ -144,7 +145,8 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     histList[0] .GetYaxis().SetTitleOffset(1.1)
     histList[0] .GetXaxis().SetTitleSize(titleSize)
     histList[0] .GetXaxis().SetLabelSize(labelSize)
-    
+    # histList[0] .GetXaxis().SetTitleOffset(0.8)
+
     for x in reversed(range(len(histList))):
         histList[x].SetLineWidth(3)
         histList[x].Draw(lineStyle+"HIST SAME")
@@ -160,7 +162,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     leg .SetShadowColor(0)
     leg .SetFillColor(0)
     leg .SetLineWidth(0)
-    leg .SetTextSize(0.06)
+    leg .SetTextSize(0.055)
     leg .SetLineColor(kWhite)
     if legHeader: 
         leg .SetHeader(legHeader)
@@ -170,7 +172,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
 
     gPad.SetLogy(0)
     if isLog: gPad.SetLogy(1)
-    gPad.SetRightMargin(0.03)
+    gPad.SetRightMargin(0.032)
     gPad.SetTopMargin(0.03)
     gPad.SetLeftMargin(0.17)
     gPad.SetBottomMargin(0.15)
@@ -361,6 +363,7 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
             thisNormHist .Reset()
             thisNormHist = mad_enu_norm_hist(inFileName, thisNormHist)
             thisHist .Divide(thisNormHist)
+            ## for x in range(thisHist.GetNbinsX()): print(x, thisHist.GetXaxis().GetBinCenter(x+1), thisHist.GetBinContent(x+1))
 
         elif normType == "nofluxaverage":
             thisHist.Scale(inFlux.Integral("width")/nFiles, "width")
@@ -444,21 +447,25 @@ def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, 
     else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, legHeader=legHeader, lineStyle=lineStyle)
     
 
+## cutDen gives the option to treat the numerator and denominator differently
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, lineList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", norm="enu_ensemble", \
                               legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C", \
-                              include_ratio=True, withRebin=False):
+                              include_ratio=True, withRebin=False, cutDen=None):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
         print("Skipping "+outPlotName, "which already exists!")
         return
+
+    if cutDen == None: cutDen = cut
     
     histList    = []
     ratList     = []
     histNumList = get_hist_list(inFileNumList, plotVar, binning, cut, labels, colzList, lineList, norm)
-    histDenList = get_hist_list(inFileDenList, plotVar, binning, cut, labels, colzList, lineList, norm)
+    histDenList = get_hist_list(inFileDenList, plotVar, binning, cutDen, labels, colzList, lineList, norm)
+
     
     ## Make the first ratio
     for x in range(len(histNumList)):
@@ -474,7 +481,7 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         if withRebin: rat_hist .Rebin(2)
         rat_hist .Divide(nomHist)
         ratList  .append(rat_hist)
-    
+
     ## This makes the plots in a standard form
     if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
     else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=True, lineStyle=lineStyle)
