@@ -19,6 +19,7 @@ def report_sizes(hdf5_file):
         f.visititems(visitor)
         print("-" * 75)
         print(f"{'TOTAL':<40} {total_uncompressed/1e6:8.2f} MB  ->  {total_compressed/1e6:8.2f} MB  ({100*total_compressed/total_uncompressed:.1f}%)")
+        print("-" * 75)
 
 if __name__ == "__main__":
     report_sizes(sys.argv[1])
