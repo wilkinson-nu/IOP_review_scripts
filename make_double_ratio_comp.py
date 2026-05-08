@@ -3,16 +3,9 @@ import os
 from array import array
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
 from glob import glob
+import argparse
 
 from plotting_functions import make_generator_double_ratio_comp
-
-## def get_flav_label(flav):
-##     label = "#nu"
-##     if "bar" in flav: label = "#bar{"+label+"}"
-##     if "mu" in flav: label += "_{#mu}"
-##     if "tau" in flav: label += "_{#tau}"
-##     if "e" in flav: label += "_{e}"
-##     return label
 
 def get_flav_label(flav):
     if flav == "-14": return "#bar{#nu}_{#mu}"
@@ -24,14 +17,14 @@ def get_flav_label(flav):
 ## In this case, ignore hydrogen...
 def get_targ_label(targ):
     if targ == "Ar40": return "^{40}Ar"
-    if targ == "C8H8": return "^{12}C"
-    if targ == "H2O": return "^{16}O"
+    if targ in ["C8H8", "C12"]: return "^{12}C"
+    if targ in ["H2O", "O16"]: return "^{16}O"
     print("Unknown target", targ)
     return targ
 
 
 def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numubar", \
-                                 flavC="nue", flavD="numu", targ="Ar40", sample="ccinc", yLimits=[0,None]):
+                                 flavC="nue", flavD="numu", targ="Ar40", sample="ccinc", yLimits=[0,None], outdir="plots"):
 
     nameList = ["GENIE 10a",\
                 "CRPA",\
@@ -49,7 +42,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
-        
+
     ## As FSI doesn't make any difference, use all GENIEv3_G18 models as one...
     inFileListA = [inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
                    inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
@@ -98,9 +91,9 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     ##           1.325 1.375 1.425 1.475 1.525 1.575 1.625 1.675 \
     ##           1.725 1.775 1.825 1.875 1.925 1.975 )
 
-    binning = [0, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.18, 0.2, 0.22, 0.24, 0.28, 0.32, 0.38, 0.44, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+    binning = [0, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.18, 0.2, 0.22, 0.24, 0.28, 0.32, 0.38, 0.44, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
 
-    make_generator_double_ratio_comp("plots/XSEC_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.pdf",
+    make_generator_double_ratio_comp(outdir+"/XSEC_double_flav_ratio_"+targ+"_enu_"+sample+"_gencomp.pdf",
                                      inFileListA, inFileListB, inFileListC, inFileListD, \
                                      nameList, colzList, lineList, "Enu_true", binning, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
@@ -109,18 +102,21 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
     
 if __name__ == "__main__":
 
-    inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
+    parser = argparse.ArgumentParser("make_double_ratio_comp")
 
-    targ="Ar40"
-    sample="ccinc"
-    make_flav_double_ratio_plots(inputDir, "-12", "-14", "12", "14", targ, sample, [0.75, 1.35])
+    # Add arguments
+    parser.add_argument('--input', type=str, required=True)
+    parser.add_argument('--output', type=str, required=True)
+    parser.add_argument('--targ', type=str, required=True)
+    parser.add_argument('--sample', type=str, required=True)
 
-    targ="O16"
-    sample="cc0pi"
-    make_flav_double_ratio_plots(inputDir, "-12", "-14", "12", "14", targ, sample, [0.75, 1.35])
+    ## Parse arguments from command line
+    args = parser.parse_args()
 
-    targ="O16"
-    sample="ccinc"
-    make_flav_double_ratio_plots(inputDir, "-12", "-14", "12", "14", targ, sample, [0.75, 1.35])
+    ## Report arguments
+    for arg in vars(args): print(arg, getattr(args, arg))
 
-
+    make_flav_double_ratio_plots(args.input,
+                                 targ=args.targ,
+                                 sample=args.sample,
+                                 outdir=args.output)
