@@ -76,8 +76,8 @@ MEC_cm_direction = 0 //in CM frame prefered directions along (>0.0) or perpendic
 
 # Final state interaction parameters
 nucleus_model       = 1  //"anynucleus" i.e. realistic density profile
-nucleus_E_b         =  34   // [MeV] binding energy 
-nucleus_kf          = 220   // [MeV] Fermi momentum, used in Fermi gas model and in Pauli blocking
+# nucleus_E_b         =  34   // [MeV] binding energy 
+# nucleus_kf          = 220   // [MeV] Fermi momentum, used in Fermi gas model and in Pauli blocking
 
 kaskada_on 	 = 1      // use (1) or not (0) the cascade 
 kaskada_writeall = 0 // store all intermedate cascade particles in the event.all vector
