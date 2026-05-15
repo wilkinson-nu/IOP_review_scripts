@@ -1,10 +1,5 @@
-import ROOT
-import os
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
-from glob import glob
 import argparse
-
-from plotting_functions import make_generator_comp, make_breakdown_comp
+from plotting_functions import make_generator_comp
 
 ccinc = "cc==1"
 cc0pi = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
