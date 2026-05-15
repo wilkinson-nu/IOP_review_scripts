@@ -104,7 +104,7 @@ def make_flav_double_ratio_plots(inputDir="inputs/",
                                      nameList, colzList, lineList, "Enu_true", binning, cut, \
                                      "E_{#nu}^{true} (GeV); ("+get_flav_label(flavA)+"/"+get_flav_label(flavB)+")/("+get_flav_label(flavC)+"/"+\
                                      get_flav_label(flavD)+") "+ get_targ_label(targ)+" "+sample_label+" ratio",
-                                     legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0.65, 1.65], yRatLimits=[0.5, 1.1], lineStyle="][ ")
+                                     legDim=[0.65, 0.44, 0.85, 0.93], yLimits=[0.65, 1.65], yRatLimits=[0.5, 1.1], lineStyle="][ ")
     
 if __name__ == "__main__":
 
