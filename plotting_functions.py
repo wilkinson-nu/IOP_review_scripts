@@ -109,7 +109,7 @@ def get_chain(inputFileNamesWithNorm, max_files=99999):
 
     return inTree, inFlux, inEvt, nFiles, norm
 
-def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], \
+def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, \
                         yLimits=[0, None], topMidLine=False, isLog=False, lineStyle="C", legHeader=None):
     
     can_small = TCanvas("can_small", "can_small", 600, 600)
@@ -163,6 +163,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     leg .SetFillColor(0)
     leg .SetLineWidth(0)
     leg .SetTextSize(0.055)
+    leg .SetNColumns(legCols)
     leg .SetLineColor(kWhite)
     if legHeader: 
         leg .SetHeader(legHeader)
@@ -181,7 +182,7 @@ def make_one_panel_plot(outPlotName, histList, nameList, legDim=[0.65, 0.5, 0.85
     can_small .SaveAs(outPlotName)
 
 
-def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], \
+def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, \
                         yLimits=[0, None], yRatLimits=[0.4, 1.6], topMidLine=False, isLog=False, \
                         rat_title_num="Model", lineStyle="C", legHeader=None):
 
@@ -244,6 +245,7 @@ def make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim=[0.65, 
     leg .SetLineWidth(0)
     leg .SetTextSize(0.07)
     leg .SetLineColor(kWhite)
+    leg .SetNColumns(legCols)
     if legHeader:
         leg .SetHeader(legHeader)
     for hist in range(len(histList)):
@@ -388,7 +390,7 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
 def make_generator_comp(outPlotName, inFileList, nameList, colzList, lineList, \
                         plotVar="q0", binning="100,0,5", cut="cc==1", \
                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", \
-                        legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], \
+                        legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, yLimits=[0, None], yRatLimits=[0.4, 1.6], \
                         norm=None, withRebin=False, isLog=False, include_ratio=True, rat_title_num="Model", \
                         lineStyle="C"):
 
@@ -410,15 +412,15 @@ def make_generator_comp(outPlotName, inFileList, nameList, colzList, lineList, \
         ratList  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, rat_title_num=rat_title_num, isLog=isLog, lineStyle=lineStyle)
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, isLog=isLog, lineStyle=lineStyle)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, legCols, yLimits, yRatLimits, rat_title_num=rat_title_num, isLog=isLog, lineStyle=lineStyle)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, legCols, yLimits, isLog=isLog, lineStyle=lineStyle)
 
 
 ## This subdivides the prediction of a single generator as required
 def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, lineList, \
                         plotVar, binning, cutList, \
 			labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", \
-			legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0, 1.05], \
+			legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, yLimits=[0, None], yRatLimits=[0, 1.05], \
 			norm=None, withRebin=True, isLog=False, include_ratio=True, rat_title_num="Channel", \
                         lineStyle="C"):
 
@@ -443,15 +445,15 @@ def make_breakdown_comp(outPlotName, inFileList, legHeader, nameList, colzList, 
         ratList  .append(rat_hist)
 
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, rat_title_num=rat_title_num, legHeader=legHeader, lineStyle=lineStyle)
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, legHeader=legHeader, lineStyle=lineStyle)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, legCols, yLimits, yRatLimits, rat_title_num=rat_title_num, legHeader=legHeader, lineStyle=lineStyle)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, legCols, yLimits, legHeader=legHeader, lineStyle=lineStyle)
     
 
 ## cutDen gives the option to treat the numerator and denominator differently
 def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameList, colzList, lineList, \
                               plotVar="q0", binning="100,0,5", cut="cc==1", \
                               labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", norm="enu_ensemble", \
-                              legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C", \
+                              legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C", \
                               include_ratio=True, withRebin=False, cutDen=None):
 
     ## Skip files that already exist
@@ -483,14 +485,15 @@ def make_generator_ratio_comp(outPlotName, inFileNumList, inFileDenList, nameLis
         ratList  .append(rat_hist)
 
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=True, lineStyle=lineStyle)
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, legCols, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, legCols, yLimits, topMidLine=True, lineStyle=lineStyle)
 
     
 def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, nameList, colzList, lineList, \
                         plotVar="q0", binning="100,0,5", cut="cc==1", \
                         labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)",
-                        legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], include_ratio=True, withRebin=False):
+                        legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, yLimits=[0, None],
+                        yRatLimits=[0.4, 1.6], include_ratio=True, withRebin=False):
 
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
@@ -521,8 +524,8 @@ def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, name
         ratList  .append(rat_hist)
 
     ## This makes the plots in a standard form
-    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, yLimits, yRatLimits, topMidLine=False, lineStyle="")
-    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, yLimits, topMidLine=False, lineStyle="")
+    if include_ratio: make_two_panel_plot(outPlotName, histList, ratList, nameList, legDim, legCols, yLimits, yRatLimits, topMidLine=False, lineStyle="")
+    else: make_one_panel_plot(outPlotName, histList, nameList, legDim, legCols, yLimits, topMidLine=False, lineStyle="")
 
     
     
@@ -530,7 +533,7 @@ def make_A_over_BC_comp(outPlotName, inFileListA, inFileListB, inFileListC, name
 def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFileListC, inFileListD, \
                                      nameList, colzList, lineList, plotVar, binning, cut="cc==1", \
                                      labels="q_{0} (GeV); d#sigma/dq_{0} (#times 10^{-38} cm^{2}/nucleon)", norm="enu_ensemble", \
-                                     legDim=[0.65, 0.5, 0.85, 0.93], yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C"):
+                                     legDim=[0.65, 0.5, 0.85, 0.93], legCols=1, yLimits=[0, None], yRatLimits=[0.4, 1.6], lineStyle="C"):
     
     ## Skip files that already exist
     if os.path.isfile(outPlotName):
@@ -577,4 +580,4 @@ def make_generator_double_ratio_comp(outPlotName, inFileListA, inFileListB, inFi
         ratListABCD  .append(rat_hist)
     
     ## This makes the plots in a standard form
-    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
+    make_two_panel_plot(outPlotName, histListABCD, ratListABCD, nameList, legDim, legCols, yLimits, yRatLimits, topMidLine=True, lineStyle=lineStyle)
