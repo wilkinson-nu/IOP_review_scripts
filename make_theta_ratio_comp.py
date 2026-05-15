@@ -1,9 +1,4 @@
-import ROOT
-import os
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
-from glob import glob
 import argparse
-
 from plotting_functions import make_generator_comp, make_generator_ratio_comp
 
 def make_theta_ratio_plots(inputDir="inputs/",
