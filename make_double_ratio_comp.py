@@ -8,10 +8,10 @@ import argparse
 from plotting_functions import make_generator_double_ratio_comp
 
 def get_flav_label(flav):
-    if flav == "-14": return "#bar{#nu}_{#mu}"
-    if flav == "-12": return "#bar{#nu}_{e}"
-    if flav == "14": return "#nu_{#mu}"
-    if flav == "12": return "#nu_{e}"
+    if flav == -14: return "#bar{#nu}_{#mu}"
+    if flav == -12: return "#bar{#nu}_{e}"
+    if flav == 14: return "#nu_{#mu}"
+    if flav == 12: return "#nu_{e}"
     return "#nu"
 
 ## In this case, ignore hydrogen...
@@ -23,9 +23,15 @@ def get_targ_label(targ):
     return targ
 
 
-def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numubar", \
-                                 flavC="nue", flavD="numu", targ="Ar40", sample="ccinc", yLimits=[0,None], outdir="plots"):
-
+def make_flav_double_ratio_plots(inputDir="inputs/",
+                                 flavA=-12,
+                                 flavB=-14,
+                                 flavC=12,
+                                 flavD=14,
+                                 targ="Ar40",
+                                 sample="ccinc",
+                                 yLimits=[0,None],
+                                 outdir="plots"):
     nameList = ["GENIE 10a",\
                 "CRPA",\
                 "NEUT",\
@@ -44,40 +50,40 @@ def make_flav_double_ratio_plots(inputDir="inputs/", flavA="nuebar", flavB="numu
         sample_label = "CC0#pi"
 
     ## As FSI doesn't make any difference, use all GENIEv3_G18 models as one...
-    inFileListA = [inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavA+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
+    inFileListA = [inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavA)+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                    ]
     
-    inFileListB = [inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavB+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
+    inFileListB = [inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavB)+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                    ]
 
-    inFileListC = [inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavC+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
+    inFileListC = [inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavC)+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                    ]
     
-    inFileListD = [inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
-                   inputDir+"/MONOENSEMBLE_"+flavD+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
+    inFileListD = [inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_GENIEv3_G18_10a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_GENIEv3_CRPA21_04a_00_000_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_NEUT580_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_NEUTDCC_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_NUWRO_LFGRPA_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_NUWROv25.3.1_100k_*_NUISFLAT.root",\
+                   inputDir+"/MONOENSEMBLE_"+str(flavD)+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                    ]
 
     ## Input fluxes generated with:

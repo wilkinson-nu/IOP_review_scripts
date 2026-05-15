@@ -88,9 +88,6 @@ if __name__ == "__main__":
     parser.add_argument('--targ2', type=str, required=True)
     parser.add_argument('--flav', type=str, required=True)
     parser.add_argument('--sample', type=str, required=True)
-    # parser.add_argument('--y_limits', type=float, nargs=2, required=True)
-    # parser.add_argument('--y_rat_limits', type=float, nargs=2, required=True)
-    # parser.add_argument('--leg_dim', type=float, nargs=4, required=True)
 
     ## Parse arguments from command line
     args = parser.parse_args()
