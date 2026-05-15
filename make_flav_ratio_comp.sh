@@ -6,14 +6,14 @@ PLOT_DIR="/global/homes/c/cwilk/IOP_review_scripts/new_plots"
 
 ## List of plots I previously made sequentially
 arg_sets=(
-    "--input ${INPUT_DIR} --flav1 12 --flav2 14 --targ Ar40 --sample ccinc --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.51 0.93 0.90 --lowe 1 --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --flav1 -12 --flav2 -14 --targ Ar40 --sample ccinc --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.51 0.93 0.90 --lowe 1 --output ${PLOT_DIR}"
-    ## "--input ${INPUT_DIR} --flav1 -12 --flav2 12 --targ Ar40 --sample ccinc --y_limits 0 0.65 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.45 --output ${PLOT_DIR}"
-    ## "--input ${INPUT_DIR} --flav1 -14 --flav2 14 --targ Ar40 --sample ccinc --y_limits 0 0.65 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.45 --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --flav1 12 --flav2 14 --targ O16 --sample cc0pi --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.51 0.93 0.90 --lowe 1 --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --flav1 -12 --flav2 -14 --targ O16 --sample cc0pi --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.51 0.93 0.90 --lowe 1 --output ${PLOT_DIR}"
-    ## "--input ${INPUT_DIR} --flav1 -12 --flav2 12 --targ O16 --sample cc0pi --y_limits 0 0.85 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.45 --output ${PLOT_DIR}"
-    ## "--input ${INPUT_DIR} --flav1 -14 --flav2 14 --targ O16 --sample cc0pi --y_limits 0 0.85 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.45 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 12 --flav2 14 --targ Ar40 --sample ccinc --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.44 0.93 0.93 --lowe 1 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -12 --flav2 -14 --targ Ar40 --sample ccinc --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.44 0.93 0.93 --lowe 1 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -12 --flav2 12 --targ Ar40 --sample ccinc --y_limits 0 0.65 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.55 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -14 --flav2 14 --targ Ar40 --sample ccinc --y_limits 0 0.65 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.55 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 12 --flav2 14 --targ O16 --sample cc0pi --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.44 0.93 0.93 --lowe 1 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -12 --flav2 -14 --targ O16 --sample cc0pi --y_limits 1 1.9 --y_rat_limits 0.75 1.15 --leg_dim 0.65 0.44 0.93 0.93 --lowe 1 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -12 --flav2 12 --targ O16 --sample cc0pi --y_limits 0 0.85 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.55 --output ${PLOT_DIR}"
+    "--input ${INPUT_DIR} --flav1 -14 --flav2 14 --targ O16 --sample cc0pi --y_limits 0 0.85 --y_rat_limits 0.75 1.5 --leg_dim 0.65 0.06 0.93 0.55 --output ${PLOT_DIR}"
 )
 
 
