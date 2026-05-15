@@ -55,6 +55,12 @@ if __name__ == "__main__":
     parser.add_argument('--targ',   type=str, required=True)
     parser.add_argument('--flux',   type=str, required=True)
 
+    ## Parse arguments from command line
+    args = parser.parse_args()
+
+    ## Report arguments
+    for arg in vars(args): print(arg, getattr(args, arg))
+    
     make_ehad_plots(args.input,
                     args.det,
                     args.targ,
