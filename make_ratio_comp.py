@@ -1,3 +1,4 @@
+import argparse
 import ROOT
 import os
 from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
@@ -22,7 +23,8 @@ def get_targ_label(targ):
     print("Unknown target", targ)
     return targ
 
-def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", yLimits=[0.65, 1.25], yRatLimits=[0.75, 1.25]):
+def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", yLimits=[0.65, 1.25], \
+                          yRatLimits=[0.75, 1.25], legDim=[0.65, 0.06, 0.93, 0.45], binning=None):
 
     nameList = ["GENIE 10a",\
                 "CRPA",\
@@ -41,6 +43,11 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
     #     cut += "&& Enu_true > 0.11"
     
     sample_label = "CCINC"
+
+    ## Add a default binning
+    if binning == None:
+        binning = [0, 0.10, 0.12, 0.14, 0.16, 0.2, 0.24, 0.28, 0.32, 0.36, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.5, 4.0, 4.5, 5.0]
+
     if sample == "cc0pi":
         cut += "&& Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0"
         sample_label = "CC0#pi"
@@ -63,12 +70,10 @@ def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="A
                      inputDir+"/MONOENSEMBLE_"+flav2+"_"+targ+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                      ]
 
-    binning = [0, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.18, 0.2, 0.22, 0.24, 0.28, 0.32, 0.38, 0.44, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
-
     make_generator_ratio_comp("plots/XSEC_ratio_"+flav1+"_over_"+flav2+"_"+targ+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, lineList, "Enu_true", binning, cut, \
                               "E_{#nu}^{true} (GeV); "+get_flav_label(flav1)+"/"+get_flav_label(flav2)+" "+get_targ_label(targ)+" "+sample_label+" ratio", \
-                              legDim=[0.65, 0.06, 0.93, 0.45], yLimits=yLimits, yRatLimits=yRatLimits, norm="enu_ensemble", lineStyle="][")
+                              legDim=legDim, yLimits=yLimits, yRatLimits=yRatLimits, norm="enu_ensemble", lineStyle="][")
 
     
 def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="numu", sample="ccinc"):
@@ -116,36 +121,56 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
                      inputDir+"/MONOENSEMBLE_"+flav+"_"+targ2+"_*GeV_GiBUU_100k_*_NUISFLAT.root"\
                      ]
 
-    binning = [0, 0.13, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.6, 3.0, 3.4, 3.8, 4.2, 4.6, 5.0]
+    binning = [0, 0.13, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.6, 0.7, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.6, 3.0, 3.4, 3.8, 4.2, 4.6, 5.0]
 
     make_generator_ratio_comp("plots/XSEC_ratio_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, lineList, "Enu_true", binning, cut, \
                               "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
-                              legDim=[0.65, 0.06, 0.93, 0.45], yLimits=[0.65, 1.35], yRatLimits=[0.8, 1.2], norm="enu_ensemble", lineStyle="][ ")
+                              legDim=[0.65, 0.04, 0.93, 0.43], yLimits=[0.62, 1.28], yRatLimits=[0.75, 1.25], norm="enu_ensemble", lineStyle="][ ")
     
 
 if __name__ == "__main__":
 
+    # Parse some args
+    parser = argparse.ArgumentParser("make_flav_ratio_comp")
+
+    # Add arguments
+    parser.add_argument('--input', type=str, required=True)
+    parser.add_argument('--flav1', type=int, required=True)
+    parser.add_argument('--flav2', type=int, required=True)
+    parser.add_argument('--targ', type=str, required=True)
+    parser.add_argument('--sample', type=str, required=True)
+    parser.add_argument('--y_limits', type=float, nargs=2, required=True)
+    parser.add_argument('--y_rat_limits', type=float, nargs=2, required=True)
+    parser.add_argument('--leg_dim', type=float, nargs=4, required=True)
+
+    ## Optional
+    parser.add_argument('--use_lowe_binning', type=int, choices=[0,1], default=0)
+    
     inputDir="/pscratch/sd/c/cwilk/MC_IOP_review/*/"
 
+    lowe_binning = [0, 0.10, 0.11, 0.12, 0.13, 0.14, 0.15, 0.16, 0.18, 0.2, 0.22, 0.24, 0.28, 0.32, 0.38, 0.44, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
+    
     targ = "Ar40"
     sample = "ccinc"
-    #make_flav_ratio_plots(inputDir, "12", "14", targ, sample, [0.95, 1.8], [0.8, 1.1])
-    #make_flav_ratio_plots(inputDir, "-12", "-14", targ, sample, [0.95, 1.8], [0.8, 1.1])
-    make_flav_ratio_plots(inputDir, "-12", "12", targ, sample, [0, 0.55], [0.75, 1.5])
-    make_flav_ratio_plots(inputDir, "-14", "14", targ, sample, [0, 0.55], [0.75, 1.5])
+    make_flav_ratio_plots(args.input, "12", "14", targ, sample, yLimits=[1, 2.5], yRatLimits=[0.75, 1.05], legDim=[0.65, 0.51, 0.93, 0.90], binning=lowe_binning)
+    make_flav_ratio_plots(args.input, "-12", "-14", targ, sample, yLimits=[1, 2.5], yRatLimits=[0.75, 1.05], legDim=[0.65, 0.51, 0.93, 0.90], binning=lowe_binning)
+    make_flav_ratio_plots(args.input, "-12", "12", targ, sample, yLimits=[0, 0.65], yRatLimits=[0.75, 1.5], legDim=[0.65, 0.06, 0.93, 0.45])
+    make_flav_ratio_plots(args.input, "-14", "14", targ, sample, yLimits=[0, 0.65], yRatLimits=[0.75, 1.5], legDim=[0.65, 0.06, 0.93, 0.45])
 
     targ = "O16"
     sample = "cc0pi"
-    #make_flav_ratio_plots(inputDir, "12", "14", targ, sample, [0.95, 1.8], [0.8, 1.1])
-    #make_flav_ratio_plots(inputDir, "-12", "-14", targ, sample, [0.95, 1.8], [0.8, 1.1])
-    make_flav_ratio_plots(inputDir, "-12", "12", targ, sample, [0, 0.65], [0.75, 1.5])
-    make_flav_ratio_plots(inputDir, "-14", "14", targ, sample, [0, 0.65], [0.75, 1.5])
+    make_flav_ratio_plots(args.input, "12", "14", targ, sample, yLimits=[1, 2.5], yRatLimits=[0.75, 1.05], legDim=[0.65, 0.51, 0.93, 0.90], binning=lowe_binning)
+    make_flav_ratio_plots(args.input, "-12", "-14", targ, sample, yLimits=[1, 2.5], yRatLimits=[0.75, 1.05], legDim=[0.65, 0.51, 0.93, 0.90], binning=lowe_binning)
+    make_flav_ratio_plots(args.input, "-12", "12", targ, sample, yLimits=[0, 0.85], yRatLimits=[0.75, 1.5], legDim=[0.65, 0.06, 0.93, 0.45])
+    make_flav_ratio_plots(args.input, "-14", "14", targ, sample, yLimits=[0, 0.85], yRatLimits=[0.75, 1.5], legDim=[0.65, 0.06, 0.93, 0.45])
 
     
     for flav in ["14", "-14"]:
-        for sample in ["ccinc", "cc0pi"]: #, "cc1pi", "cc2pi"]:
-            make_targ_ratio_plots(inputDir, "Ar40", "C12", flav, sample)
-            make_targ_ratio_plots(inputDir, "O16", "C12", flav, sample)
+        sample = "ccinc"
+        make_targ_ratio_plots(args.input, "Ar40", "C12", flav, sample)
+
+        sample = "cc0pi"
+        make_targ_ratio_plots(args.input, "O16", "C12", flav, sample)
 
 
