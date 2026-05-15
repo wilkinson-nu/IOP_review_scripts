@@ -1,7 +1,7 @@
 import argparse
 from plotting_functions import make_generator_comp
 
-def make_T2K_erec_plots(inputDir="inputs/", det="T2KND", flux="FHC_numu"):
+def make_T2K_erec_comp(inputDir="inputs/", det="T2KND", flux="FHC_numu"):
 
 
     nameList = ["GENIE 10a",\

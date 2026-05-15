@@ -1,7 +1,7 @@
 import argparse
 from plotting_functions import make_generator_comp
 
-def make_DUNE_erec_plots(inputDir="inputs/", det="DUNEND", flux="FHC_numu", output="plots/"):    
+def make_DUNE_erec_comp(inputDir="inputs/", det="DUNEND", flux="FHC_numu", output="plots/"):    
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
