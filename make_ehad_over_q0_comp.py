@@ -41,7 +41,7 @@ def make_ehad_plots(inputDir="inputs/", det="DUNEND", targ="Ar40", flux="FHC_num
                   ]
     
     make_generator_comp(outdir+"/"+det+"_"+flux+"_"+targ+"_ehadoverq0_gencomp.pdf", inFileList, nameList, colzList, lineList, "("+ehad+")/q0", "60,0,1.2", ccinc, \
-                        "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], [0, None], [0,2.6])
+                        "E_{had}^{rec}/q_{0}; d#sigma/d(E_{had}^{rec}/q_{0}) (#times 10^{-38} cm^{2}/nucleon)", [0.2, 0.3, 0.45, 0.93], 1, [0, None], [0,2.6])
 
         
 if __name__ == "__main__":
