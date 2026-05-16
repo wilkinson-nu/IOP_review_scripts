@@ -6,10 +6,10 @@ PLOT_DIR="/global/homes/c/cwilk/IOP_review_scripts/new_plots"
 
 ## List of plots I previously made sequentially
 arg_sets=(
-    "--input ${INPUT_DIR} --det=T2KND --flux=FHC_numu --targ=H2O --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --det=T2KND --flux=RHC_numubar --targ=H2O --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --det=DUNEND --flux=FHC_numu --targ=Ar40 --output ${PLOT_DIR}"
-    "--input ${INPUT_DIR} --det=DUNEND --flux=RHC_numubar --targ=Ar40 --output ${PLOT_DIR}"
+    "--input=${INPUT_DIR} --det=T2KND --flux=FHC_numu --targ=H2O --output ${PLOT_DIR}"
+    "--input=${INPUT_DIR} --det=T2KND --flux=RHC_numubar --targ=H2O --output ${PLOT_DIR}"
+    "--input=${INPUT_DIR} --det=DUNEND --flux=FHC_numu --targ=Ar40 --output ${PLOT_DIR}"
+    "--input=${INPUT_DIR} --det=DUNEND --flux=RHC_numubar --targ=Ar40 --output ${PLOT_DIR}"
 )
 
 
