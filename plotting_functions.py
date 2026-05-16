@@ -92,15 +92,15 @@ def get_chain(inputFileNamesWithNorm, max_files=99999):
 
         ## Add the histograms up
         inFile   = ROOT.TFile(inputFileName, "READ")
-        for key in inFile.GetListOfKeys():
-            
-            if "EVT" not in key.GetName(): continue
-                
-            tempEvt = inFile.Get(key.GetName())
-            ## if not inEvt:
-            ##     inEvt = tempEvt
-            ##     inEvt .SetDirectory(0)
-            ## else: inEvt.Add(tempEvt)
+        ## for key in inFile.GetListOfKeys():
+        ##     
+        ##     if "EVT" not in key.GetName(): continue
+        ##         
+        ##     tempEvt = inFile.Get(key.GetName())
+        ##     if not inEvt:
+        ##         inEvt = tempEvt
+        ##         inEvt .SetDirectory(0)
+        ##     else: inEvt.Add(tempEvt)
         inFile.Close()    
 
     ## Scale the event rate histogram
@@ -332,6 +332,8 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
     histList = []
     nFile = len(inFileList)
 
+    print("Found normType =", normType)
+    
     ## Loop over the input files and make the histograms
     for x in range(nFile):
 
@@ -368,12 +370,16 @@ def get_hist_list(inFileList, plotVar, binning, cut, labels, colzList, lineList,
             ## for x in range(thisHist.GetNbinsX()): print(x, thisHist.GetXaxis().GetBinCenter(x+1), thisHist.GetBinContent(x+1))
 
         elif normType == "nofluxaverage":
+            print("Applying nofluxaverage normalization")
             thisHist.Scale(inFlux.Integral("width")/nFiles, "width")
         elif normType=="shape":
+            print("Applying shape normalization")
             thisHist .Scale(1/thisHist.Integral(0, -1))
         elif normType=="theta":
+            print("Applying theta normalization")
             thisHist .Scale(1/thisHist.GetBinContent(1), "width")            
         else:
+            print("Applying default normalization")
             thisHist.Scale(1./nFiles, "width")
         
 	## Retain for use
