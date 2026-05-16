@@ -60,7 +60,7 @@ def make_theta_ratio_plots(inputDir="inputs/",
     
     make_generator_ratio_comp(outdir+"/"+det+"_"+flux+"_"+targ+"_theta_NDFD_ratio_gencomp.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, lineList, "acos(CosLep)*180/pi", theta_binning, cut, norm="xsec", \
-                              labels="#theta_{#mu} (degrees); FD/ND", legDim=[0.5, 0.58, 0.95, 0.93], legCols=2, yLimits=[0.6, None], yRatLimits=[0.5, 1.5], include_ratio=True, lineStyle="][")
+                              labels="#theta_{#mu} (degrees); FD/ND", legDim=[0.35, 0.58, 0.95, 0.93], legCols=2, yLimits=[0.6, None], yRatLimits=[0.5, 1.5], include_ratio=True, lineStyle="][")
     
 if __name__ == "__main__":
 
