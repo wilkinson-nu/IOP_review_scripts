@@ -1,7 +1,7 @@
 from plotting_functions import make_generator_ratio_comp
 import argparse
 
-def make_T2K_erec_threshold_plots(inputDir="inputs/", flux="FHC_numu"):
+def make_T2K_erec_threshold_comp(inputDir="inputs/", flux="FHC_numu", outdir="plots"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
