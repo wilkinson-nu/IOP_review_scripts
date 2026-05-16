@@ -4,7 +4,7 @@ import argparse
 qe_cut = "cc==1 && Sum$(abs(pdg) > 100 && abs(pdg) < 2000)==0 && Sum$(abs(pdg) > 2300 && abs(pdg) < 100000)==0 && nfsp > 0"
 ccinc = "cc==1"
 
-def make_theta_scaled_plots(inputDir="inputs/", det="T2KND", flux="FHC_numu", outdir="plots/"):
+def make_theta_scaled_comp(inputDir="inputs/", det="T2KND", flux="FHC_numu", outdir="plots/"):
 
     nameList = ["GENIE 10a",\
                 "GENIE 10b",\
@@ -41,7 +41,7 @@ def make_theta_scaled_plots(inputDir="inputs/", det="T2KND", flux="FHC_numu", ou
                   ]
     
     make_generator_comp(outdir+"/"+det+"_"+flux+"_"+targ+"_theta_scaled_gencomp.pdf", inFileList, nameList, colzList, lineList, "acos(CosLep)*180/pi", custom_binning, cut, \
-                        "#theta_{#mu} (degrees); Scaled cross section", [0.65, 0.3, 0.85, 0.93], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])        
+                        "#theta_{#mu} (degrees); Scaled cross section", [0.66, 0.3, 0.85, 0.94], norm="theta", lineStyle="C", yRatLimits=[0, 2.1])        
         
 if __name__ == "__main__":
 
