@@ -74,7 +74,7 @@ def make_targ_ratio_plots(inputDir="inputs/", targ1="C8H8", targ2="H2O", flav="n
     make_generator_ratio_comp(outdir+"/XSEC_ratio_"+targ1+"_over_"+targ2+"_"+flav+"_enu_"+sample+"_gencomp.pdf", inFileNumList, inFileDenList, \
                               nameList, colzList, lineList, "Enu_true", binning, cut, \
                               "E_{#nu}^{true} (GeV);"+get_flav_label(flav)+" "+get_targ_label(targ1)+"/"+get_targ_label(targ2)+" "+sample_label+" ratio", \
-                              legDim=[0.65, 0.06, 0.93, 0.55], yLimits=[0.62, 1.28], yRatLimits=[0.75, 1.25], norm="enu_ensemble", lineStyle="][ ")
+                              legDim=[0.65, 0.06, 0.93, 0.55], yLimits=[0.62, 1.23], yRatLimits=[0.75, 1.25], norm="enu_ensemble", lineStyle="][ ")
     
 
 if __name__ == "__main__":
