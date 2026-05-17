@@ -1,9 +1,4 @@
 import argparse
-import ROOT
-import os
-from ROOT import gStyle, TGaxis, TPad, TLine, gROOT, TH1, TColor, TCanvas, TFile, TH1D, gPad, TLegend, kWhite, gDirectory, gEnv
-from glob import glob
-
 from plotting_functions import make_generator_ratio_comp
 
 def get_flav_label(flav):
@@ -23,7 +18,7 @@ def get_targ_label(targ):
     print("Unknown target", targ)
     return targ
 
-def make_flav_ratio_plots(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", yLimits=[0.65, 1.25], \
+def make_flav_ratio_comp(inputDir="inputs/", flav1="nue", flav2="numu", targ="Ar40", sample="ccinc", yLimits=[0.65, 1.25], \
                           yRatLimits=[0.75, 1.25], legDim=[0.65, 0.06, 0.93, 0.45], binning=None, outdir="plots"):
 
     nameList = ["GENIE 10a",\
@@ -105,14 +100,14 @@ if __name__ == "__main__":
     if args.lowe == 1:
         binning = [0.2, 0.22, 0.24, 0.28, 0.32, 0.38, 0.44, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
 
-    make_flav_ratio_plots(args.input,
-                          args.flav1,
-                          args.flav2,
-                          args.targ,
-                          args.sample,
-                          yLimits=args.y_limits,
-                          yRatLimits=args.y_rat_limits,
-                          legDim=args.leg_dim,
-                          binning=binning,
-                          outdir=args.output)
+    make_flav_ratio_comp(args.input,
+                         args.flav1,
+                         args.flav2,
+                         args.targ,
+                         args.sample,
+                         yLimits=args.y_limits,
+                         yRatLimits=args.y_rat_limits,
+                         legDim=args.leg_dim,
+                         binning=binning,
+                         outdir=args.output)
 
